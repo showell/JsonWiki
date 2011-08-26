@@ -18,20 +18,26 @@ MultiView = (widgets) ->
   self =
     current: -> widgets[0]
 
+create_save_link = (widget, save_method) ->
+  save_link = $("<a href='#'>").html("save")
+  save_link.click ->
+    save_method widget.value()
+  elem = widget.element()
+  elem.append save_link
+  
 List = (array, widgetizer, save_method) ->
   subwidgets = _.map(array, widgetizer)
   list_edit_view = ListEditView(subwidgets)
   multi_view = MultiView([list_edit_view])
   elem = $("<div>")
   elem.append multi_view.current().element()
-  save_link = $("<a href='#'>").html("save")
-  save_link.click ->
-    save_method self.value()
-  elem.append save_link
   
   self =
     element: -> elem
     value: -> multi_view.current().value()
+    
+  create_save_link(self, save_method)  
+  self
     
 jQuery(document).ready ->
   save = (data) -> console.log data
