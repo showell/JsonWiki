@@ -1,5 +1,5 @@
 (function() {
-  var Atom, List, ListEditView, MultiView, create_save_link;
+  var Atom, List, ListEditView, ListRawView, MultiView, create_save_link;
   Atom = function(s) {
     var elem, self;
     elem = $("<textarea>");
@@ -10,6 +10,19 @@
       },
       value: function() {
         return elem.val();
+      }
+    };
+  };
+  ListRawView = function(array) {
+    var self, textarea;
+    textarea = $("<textarea>").attr("rows", 10);
+    textarea.html(JSON.stringify(array, null, " "));
+    return self = {
+      element: function() {
+        return textarea;
+      },
+      value: function() {
+        return JSON.parse(textarea.html());
       }
     };
   };
@@ -50,12 +63,10 @@
     return elem.append(save_link);
   };
   List = function(array, widgetizer, save_method) {
-    var elem, list_edit_view, multi_view, self, subwidgets;
-    subwidgets = _.map(array, widgetizer);
-    list_edit_view = ListEditView(subwidgets);
-    multi_view = MultiView([list_edit_view]);
+    var elem, multi_view, self, subwidgets;
     elem = $("<div>");
-    elem.append(multi_view.current().element());
+    subwidgets = _.map(array, widgetizer);
+    multi_view = MultiView([ListRawView(array), ListEditView(subwidgets)]);
     self = {
       element: function() {
         return elem;
@@ -64,6 +75,7 @@
         return multi_view.current().value();
       }
     };
+    elem.append(multi_view.current().element());
     create_save_link(self, save_method);
     return self;
   };
