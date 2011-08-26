@@ -41,3 +41,6 @@ All objects support these methods, with defaults provided for most:
 * collapse
 * refresh_from_remote
 * search
+* add_item
+* fetch
+
