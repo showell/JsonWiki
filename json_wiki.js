@@ -1,5 +1,5 @@
 (function() {
-  var Atom, List;
+  var Atom, List, ListEditView, MultiView;
   Atom = function(s) {
     var elem, self;
     elem = $("<textarea>");
@@ -13,17 +13,9 @@
       }
     };
   };
-  List = function(array, widgetizer, save_method) {
-    var elem, li, save_link, self, subwidgets, ul, w, _i, _len;
-    subwidgets = _.map(array, widgetizer);
-    elem = $("<div>");
+  ListEditView = function(subwidgets) {
+    var li, self, ul, w, _i, _len;
     ul = $("<ul>");
-    elem.append(ul);
-    save_link = $("<a href='#'>").html("save");
-    save_link.click(function() {
-      return save_method(self.value());
-    });
-    elem.append(save_link);
     for (_i = 0, _len = subwidgets.length; _i < _len; _i++) {
       w = subwidgets[_i];
       li = $("<li>").html(w.element());
@@ -31,12 +23,41 @@
     }
     return self = {
       element: function() {
-        return elem;
+        return ul;
       },
       value: function() {
         return _.map(subwidgets, function(w) {
           return w.value();
         });
+      }
+    };
+  };
+  MultiView = function(widgets) {
+    var self;
+    return self = {
+      current: function() {
+        return widgets[0];
+      }
+    };
+  };
+  List = function(array, widgetizer, save_method) {
+    var elem, list_edit_view, multi_view, save_link, self, subwidgets;
+    subwidgets = _.map(array, widgetizer);
+    list_edit_view = ListEditView(subwidgets);
+    multi_view = MultiView([list_edit_view]);
+    elem = $("<div>");
+    elem.append(multi_view.current().element());
+    save_link = $("<a href='#'>").html("save");
+    save_link.click(function() {
+      return save_method(self.value());
+    });
+    elem.append(save_link);
+    return self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return multi_view.current().value();
       }
     };
   };
