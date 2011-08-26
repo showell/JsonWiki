@@ -10,7 +10,7 @@ Atom = (s) ->
 ListRawView = (array) ->
   div = $("<div>")
   textarea = $("<textarea>").attr("rows", 10)
-  textarea.css
+  textarea.css("font-size", "15px")
   div.append textarea
   self =
     element: -> div
@@ -33,14 +33,14 @@ ListEditView = (array, widgetizer) ->
       for w in subwidgets
         li = $("<li>").html w.element()
         ul.append li
-  self.set()
+  self.set(array)
   self
 
 create_toggle_link = (parent, toggle) ->
   toggle_link = $("<a href='#'>").html "toggle"
   toggle_link.click toggle
-  parent.append ' '
-  parent.append toggle_link
+  parent.prepend toggle_link
+  parent.prepend ' '
 
 MultiView = (parent, widgets) ->
   div = $("<div>")
@@ -81,15 +81,22 @@ List = (array, widgetizer, save_method) ->
     append: (subelem) -> elem.append subelem
     
   multi_view = MultiView self, [
-    ListRawView(array),
     ListEditView(array, widgetizer),
+    ListRawView(array),
   ]
 
-  create_save_link(self, save_method)  
+  create_save_link(self, save_method) if save_method
   self
     
 jQuery(document).ready ->
   save = (data) -> console.log data
-  root = List(["hello", "world"], Atom, save)
+  data = [
+    ["hello", "world"],
+    ["yo"]
+  ]
+  schema = (sublist) -> List(sublist, Atom)
+  root = List(data, schema, save)
   $("#content").append root.element()
   console.log root.value()
+  
+  

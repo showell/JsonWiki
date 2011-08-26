@@ -21,7 +21,7 @@
     var div, self, textarea;
     div = $("<div>");
     textarea = $("<textarea>").attr("rows", 10);
-    textarea.css;
+    textarea.css("font-size", "15px");
     div.append(textarea);
     self = {
       element: function() {
@@ -63,15 +63,15 @@
         return _results;
       }
     };
-    self.set();
+    self.set(array);
     return self;
   };
   create_toggle_link = function(parent, toggle) {
     var toggle_link;
     toggle_link = $("<a href='#'>").html("toggle");
     toggle_link.click(toggle);
-    parent.append(' ');
-    return parent.append(toggle_link);
+    parent.prepend(toggle_link);
+    return parent.prepend(' ');
   };
   MultiView = function(parent, widgets) {
     var curr, div, index, self, widget, _i, _len;
@@ -128,16 +128,22 @@
         return elem.append(subelem);
       }
     };
-    multi_view = MultiView(self, [ListRawView(array), ListEditView(array, widgetizer)]);
-    create_save_link(self, save_method);
+    multi_view = MultiView(self, [ListEditView(array, widgetizer), ListRawView(array)]);
+    if (save_method) {
+      create_save_link(self, save_method);
+    }
     return self;
   };
   jQuery(document).ready(function() {
-    var root, save;
+    var data, root, save, schema;
     save = function(data) {
       return console.log(data);
     };
-    root = List(["hello", "world"], Atom, save);
+    data = [["hello", "world"], ["yo"]];
+    schema = function(sublist) {
+      return List(sublist, Atom);
+    };
+    root = List(data, schema, save);
     $("#content").append(root.element());
     return console.log(root.value());
   });
