@@ -12,7 +12,7 @@ All objects can be shown in several modes:
 <p>
 All objects must conform to one of the following structures:
 
-* string
+* atom
 * list
 * hash
 
@@ -36,6 +36,7 @@ All objects support these methods, with defaults provided for most:
 * save
 * raw_edit
 * modify
+* value
 * view
 * expand
 * collapse
@@ -43,4 +44,5 @@ All objects support these methods, with defaults provided for most:
 * search
 * add_item
 * fetch
+* element
 
