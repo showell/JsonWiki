@@ -1,27 +1,40 @@
 Atom = (s) ->
   elem = $("<textarea>")
-  elem.val(s)
   self =
     element: -> elem
     value: -> elem.val()
+    set: (s) -> elem.val(s)
+  self.set(s)
+  self
     
 ListRawView = (array) ->
   div = $("<div>")
   textarea = $("<textarea>").attr("rows", 10)
-  textarea.html JSON.stringify(array, null, " ")
+  textarea.css
   div.append textarea
   self =
     element: -> div
-    value: -> JSON.parse textarea.html()
-    
-ListEditView = (subwidgets) ->
+    value: ->
+      JSON.parse textarea.val()
+    set: (array) ->
+      textarea.val JSON.stringify(array, null, " ")
+  self.set(array)
+  self
+  
+ListEditView = (array, widgetizer) ->
   ul = $("<ul>")
-  for w in subwidgets
-    li = $("<li>").html w.element()
-    ul.append li
+  subwidgets = []
   self =
     element: -> ul
     value: -> _.map subwidgets, (w) -> w.value()
+    set: (array) ->
+      ul.empty()
+      subwidgets = _.map(array, widgetizer)
+      for w in subwidgets
+        li = $("<li>").html w.element()
+        ul.append li
+  self.set()
+  self
 
 create_toggle_link = (parent, toggle) ->
   toggle_link = $("<a href='#'>").html "toggle"
@@ -34,13 +47,16 @@ MultiView = (parent, widgets) ->
   parent.append div
   parent = div
   index = 0
+  curr = widgets[0]
   self =
-    current: -> widgets[index]
+    value: -> curr.value()
     toggle: ->
-      self.current().element().hide()
-      val = self.current().value()
+      curr.element().hide()
+      val = curr.value()
       index = (index + 1) % widgets.length
-      self.current().element().show()
+      curr = widgets[index]
+      curr.set(val)
+      curr.element().show()
   console.log widgets
   for widget in widgets
     widget.element().hide()
@@ -59,15 +75,14 @@ create_save_link = (widget, save_method) ->
   
 List = (array, widgetizer, save_method) ->
   elem = $("<div>")
-  subwidgets = _.map(array, widgetizer)
   self =
     element: -> elem
-    value: -> multi_view.current().value()
+    value: -> multi_view.value()
     append: (subelem) -> elem.append subelem
     
   multi_view = MultiView self, [
     ListRawView(array),
-    ListEditView(subwidgets),
+    ListEditView(array, widgetizer),
   ]
 
   create_save_link(self, save_method)  

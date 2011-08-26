@@ -3,40 +3,45 @@
   Atom = function(s) {
     var elem, self;
     elem = $("<textarea>");
-    elem.val(s);
-    return self = {
+    self = {
       element: function() {
         return elem;
       },
       value: function() {
         return elem.val();
+      },
+      set: function(s) {
+        return elem.val(s);
       }
     };
+    self.set(s);
+    return self;
   };
   ListRawView = function(array) {
     var div, self, textarea;
     div = $("<div>");
     textarea = $("<textarea>").attr("rows", 10);
-    textarea.html(JSON.stringify(array, null, " "));
+    textarea.css;
     div.append(textarea);
-    return self = {
+    self = {
       element: function() {
         return div;
       },
       value: function() {
-        return JSON.parse(textarea.html());
+        return JSON.parse(textarea.val());
+      },
+      set: function(array) {
+        return textarea.val(JSON.stringify(array, null, " "));
       }
     };
+    self.set(array);
+    return self;
   };
-  ListEditView = function(subwidgets) {
-    var li, self, ul, w, _i, _len;
+  ListEditView = function(array, widgetizer) {
+    var self, subwidgets, ul;
     ul = $("<ul>");
-    for (_i = 0, _len = subwidgets.length; _i < _len; _i++) {
-      w = subwidgets[_i];
-      li = $("<li>").html(w.element());
-      ul.append(li);
-    }
-    return self = {
+    subwidgets = [];
+    self = {
       element: function() {
         return ul;
       },
@@ -44,8 +49,22 @@
         return _.map(subwidgets, function(w) {
           return w.value();
         });
+      },
+      set: function(array) {
+        var li, w, _i, _len, _results;
+        ul.empty();
+        subwidgets = _.map(array, widgetizer);
+        _results = [];
+        for (_i = 0, _len = subwidgets.length; _i < _len; _i++) {
+          w = subwidgets[_i];
+          li = $("<li>").html(w.element());
+          _results.push(ul.append(li));
+        }
+        return _results;
       }
     };
+    self.set();
+    return self;
   };
   create_toggle_link = function(parent, toggle) {
     var toggle_link;
@@ -55,21 +74,24 @@
     return parent.append(toggle_link);
   };
   MultiView = function(parent, widgets) {
-    var div, index, self, widget, _i, _len;
+    var curr, div, index, self, widget, _i, _len;
     div = $("<div>");
     parent.append(div);
     parent = div;
     index = 0;
+    curr = widgets[0];
     self = {
-      current: function() {
-        return widgets[index];
+      value: function() {
+        return curr.value();
       },
       toggle: function() {
         var val;
-        self.current().element().hide();
-        val = self.current().value();
+        curr.element().hide();
+        val = curr.value();
         index = (index + 1) % widgets.length;
-        return self.current().element().show();
+        curr = widgets[index];
+        curr.set(val);
+        return curr.element().show();
       }
     };
     console.log(widgets);
@@ -93,21 +115,20 @@
     return elem.append(save_link);
   };
   List = function(array, widgetizer, save_method) {
-    var elem, multi_view, self, subwidgets;
+    var elem, multi_view, self;
     elem = $("<div>");
-    subwidgets = _.map(array, widgetizer);
     self = {
       element: function() {
         return elem;
       },
       value: function() {
-        return multi_view.current().value();
+        return multi_view.value();
       },
       append: function(subelem) {
         return elem.append(subelem);
       }
     };
-    multi_view = MultiView(self, [ListRawView(array), ListEditView(subwidgets)]);
+    multi_view = MultiView(self, [ListRawView(array), ListEditView(array, widgetizer)]);
     create_save_link(self, save_method);
     return self;
   };
