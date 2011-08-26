@@ -8,3 +8,17 @@ All data can be shown in several modes:
 * styled edit
 * styled render
 * expanded or collapsed
+
+<p>
+All data must conform to one of the following structures:
+
+* string
+* list
+* hash
+
+<p>
+All data gets persisted:
+
+* all changes are inherently persisted locally
+* some objects are only persisted through their parents
+* hitting SAVE results in data being published to a remote source
