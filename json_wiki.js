@@ -140,10 +140,12 @@
       return console.log(data);
     };
     data = [["hello", "world"], ["yo"]];
-    schema = function(sublist) {
-      return List(sublist, Atom);
+    schema = function(data) {
+      return List(data, function(sublist) {
+        return List(sublist, Atom);
+      }, save);
     };
-    root = List(data, schema, save);
+    root = schema(data);
     $("#content").append(root.element());
     return console.log(root.value());
   });

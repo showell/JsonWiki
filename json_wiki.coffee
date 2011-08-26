@@ -94,8 +94,11 @@ jQuery(document).ready ->
     ["hello", "world"],
     ["yo"]
   ]
-  schema = (sublist) -> List(sublist, Atom)
-  root = List(data, schema, save)
+  schema = (data) ->
+    List data,
+      (sublist) -> List(sublist, Atom),
+      save
+  root = schema(data)
   $("#content").append root.element()
   console.log root.value()
   
