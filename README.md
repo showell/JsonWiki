@@ -1,7 +1,7 @@
 <p>
 This doc describes a wiki for editing generalized data.
 <p>
-All data can be shown in several modes:
+All objects can be shown in several modes:
 
 * raw edit
 * raw render
@@ -10,7 +10,7 @@ All data can be shown in several modes:
 * expanded or collapsed
 
 <p>
-All data must conform to one of the following structures:
+All objects must conform to one of the following structures:
 
 * string
 * list
@@ -24,9 +24,20 @@ All data gets persisted:
 * hitting SAVE results in data being published to a remote source
 
 <p>
-All data is addressable.  Examples:
+All objects are addressable.  Examples:
 
 * ["readme.txt"]
 * ["questions", 1, "answers", "a"]
 * ["departments", "accounting", "employees", "bob"]
 
+<p>
+All objects support these methods, with defaults provided for most:
+
+* save
+* raw_edit
+* modify
+* view
+* expand
+* collapse
+* refresh_from_remote
+* search
