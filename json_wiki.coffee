@@ -7,7 +7,7 @@ Atom = (s) ->
   self.set(s)
   self
     
-ListRawView = (array) ->
+JsonRawView = (array) ->
   div = $("<div>")
   textarea = $("<textarea>").attr("rows", 10)
   textarea.css("font-size", "15px")
@@ -20,6 +20,49 @@ ListRawView = (array) ->
       textarea.val JSON.stringify(array, null, " ")
   self.set(array)
   self
+  
+HashEditView = (hash, widgetizer) ->
+  table= $("<table>")
+  div = $("<div>")
+  self = 
+    element: -> div
+    set: (hash) ->
+      hash_to_table(table, hash, widgetizer)
+      div.append table
+    value: ->
+      table_to_hash(table)
+  self.set(hash)
+  self
+    
+table_to_hash = (table) ->
+  hash = {}
+  table.find("tr").each (index, tr) ->
+    tr = $(tr)
+    key = (tr.data "get_key")()
+    value = (tr.data "get_value")()
+    hash[key] = value
+  hash
+
+set_callbacks = (tr, widget) ->
+  tr.data "get_key", ->
+    tr.find(".key").html()
+  tr.data "get_value", ->
+    widget.value() 
+
+hash_to_table = (table, hash, widgetizer) ->
+  table.empty()
+  for key, value of hash
+    td_key = $("<td class='key'>")
+    td_value = $("<td class='value'>")
+    td_key.html(key)
+    widget = widgetizer(value)
+    td_value.html(widget.element())
+    tr = $("<tr>")
+    set_callbacks(tr, widget)
+    table.append tr
+    tr.append td_key
+    tr.append td_value
+  table
   
 ListEditView = (array, widgetizer) ->
   ul = $("<ul>")
@@ -57,7 +100,6 @@ MultiView = (parent, widgets) ->
       curr = widgets[index]
       curr.set(val)
       curr.element().show()
-  console.log widgets
   for widget in widgets
     widget.element().hide()
     parent.append widget.element()
@@ -72,6 +114,21 @@ create_save_link = (widget, save_method) ->
   elem = widget.element()
   elem.append ' '
   elem.append save_link
+
+Hash = (hash, widgetizer, save_method) ->
+  elem = $("<div>")
+  self =
+    element: -> elem
+    value: -> multi_view.value()
+    append: (subelem) -> elem.append subelem
+
+  multi_view = MultiView self, [
+    HashEditView(hash, widgetizer),
+    JsonRawView(hash),
+  ]
+
+  create_save_link(self, save_method) if save_method
+  self
   
 List = (array, widgetizer, save_method) ->
   elem = $("<div>")
@@ -82,24 +139,26 @@ List = (array, widgetizer, save_method) ->
     
   multi_view = MultiView self, [
     ListEditView(array, widgetizer),
-    ListRawView(array),
+    JsonRawView(array),
   ]
 
   create_save_link(self, save_method) if save_method
   self
     
 jQuery(document).ready ->
-  save = (data) -> console.log data
+  save = (data) -> console.log JSON.stringify data
   data = [
-    ["hello", "world"],
-    ["yo"]
+    {
+      name: "alice"
+      salary: "100"
+    },
+    {hello: "world"},
   ]
   schema = (data) ->
     List data,
-      (sublist) -> List(sublist, Atom),
+      (sublist) -> Hash(sublist, Atom),
       save
   root = schema(data)
   $("#content").append root.element()
-  console.log root.value()
   
   

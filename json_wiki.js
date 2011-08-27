@@ -1,5 +1,5 @@
 (function() {
-  var Atom, List, ListEditView, ListRawView, MultiView, create_save_link, create_toggle_link;
+  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   Atom = function(s) {
     var elem, self;
     elem = $("<textarea>");
@@ -17,7 +17,7 @@
     self.set(s);
     return self;
   };
-  ListRawView = function(array) {
+  JsonRawView = function(array) {
     var div, self, textarea;
     div = $("<div>");
     textarea = $("<textarea>").attr("rows", 10);
@@ -36,6 +36,63 @@
     };
     self.set(array);
     return self;
+  };
+  HashEditView = function(hash, widgetizer) {
+    var div, self, table;
+    table = $("<table>");
+    div = $("<div>");
+    self = {
+      element: function() {
+        return div;
+      },
+      set: function(hash) {
+        hash_to_table(table, hash, widgetizer);
+        return div.append(table);
+      },
+      value: function() {
+        return table_to_hash(table);
+      }
+    };
+    self.set(hash);
+    return self;
+  };
+  table_to_hash = function(table) {
+    var hash;
+    hash = {};
+    table.find("tr").each(function(index, tr) {
+      var key, value;
+      tr = $(tr);
+      key = (tr.data("get_key"))();
+      value = (tr.data("get_value"))();
+      return hash[key] = value;
+    });
+    return hash;
+  };
+  set_callbacks = function(tr, widget) {
+    tr.data("get_key", function() {
+      return tr.find(".key").html();
+    });
+    return tr.data("get_value", function() {
+      return widget.value();
+    });
+  };
+  hash_to_table = function(table, hash, widgetizer) {
+    var key, td_key, td_value, tr, value, widget;
+    table.empty();
+    for (key in hash) {
+      value = hash[key];
+      td_key = $("<td class='key'>");
+      td_value = $("<td class='value'>");
+      td_key.html(key);
+      widget = widgetizer(value);
+      td_value.html(widget.element());
+      tr = $("<tr>");
+      set_callbacks(tr, widget);
+      table.append(tr);
+      tr.append(td_key);
+      tr.append(td_value);
+    }
+    return table;
   };
   ListEditView = function(array, widgetizer) {
     var self, subwidgets, ul;
@@ -94,7 +151,6 @@
         return curr.element().show();
       }
     };
-    console.log(widgets);
     for (_i = 0, _len = widgets.length; _i < _len; _i++) {
       widget = widgets[_i];
       widget.element().hide();
@@ -114,6 +170,26 @@
     elem.append(' ');
     return elem.append(save_link);
   };
+  Hash = function(hash, widgetizer, save_method) {
+    var elem, multi_view, self;
+    elem = $("<div>");
+    self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return multi_view.value();
+      },
+      append: function(subelem) {
+        return elem.append(subelem);
+      }
+    };
+    multi_view = MultiView(self, [HashEditView(hash, widgetizer), JsonRawView(hash)]);
+    if (save_method) {
+      create_save_link(self, save_method);
+    }
+    return self;
+  };
   List = function(array, widgetizer, save_method) {
     var elem, multi_view, self;
     elem = $("<div>");
@@ -128,7 +204,7 @@
         return elem.append(subelem);
       }
     };
-    multi_view = MultiView(self, [ListEditView(array, widgetizer), ListRawView(array)]);
+    multi_view = MultiView(self, [ListEditView(array, widgetizer), JsonRawView(array)]);
     if (save_method) {
       create_save_link(self, save_method);
     }
@@ -137,16 +213,22 @@
   jQuery(document).ready(function() {
     var data, root, save, schema;
     save = function(data) {
-      return console.log(data);
+      return console.log(JSON.stringify(data));
     };
-    data = [["hello", "world"], ["yo"]];
+    data = [
+      {
+        name: "alice",
+        salary: "100"
+      }, {
+        hello: "world"
+      }
+    ];
     schema = function(data) {
       return List(data, function(sublist) {
-        return List(sublist, Atom);
+        return Hash(sublist, Atom);
       }, save);
     };
     root = schema(data);
-    $("#content").append(root.element());
-    return console.log(root.value());
+    return $("#content").append(root.element());
   });
 }).call(this);
