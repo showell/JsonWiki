@@ -55,7 +55,7 @@ hash_to_table = (table, hash, widgetizer) ->
     td_key = $("<td class='key'>")
     td_value = $("<td class='value'>")
     td_key.html(key)
-    widget = widgetizer(value)
+    widget = widgetizer[key](value)
     td_value.html(widget.element())
     tr = $("<tr>")
     set_callbacks(tr, widget)
@@ -151,12 +151,20 @@ jQuery(document).ready ->
     {
       name: "alice"
       salary: "100"
+      friends: ["bob", "cal"]
     },
-    {hello: "world"},
+    {
+      name: "bob"
+      salary: "500"
+      friends: ["alice", "cal"]
+    }
   ]
   schema = (data) ->
     List data,
-      (sublist) -> Hash(sublist, Atom),
+      (sublist) -> Hash sublist,
+        name: Atom
+        salary: Atom
+        friends: (array) -> List array, Atom
       save
   root = schema(data)
   $("#content").append root.element()

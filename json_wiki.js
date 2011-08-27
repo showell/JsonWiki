@@ -84,7 +84,7 @@
       td_key = $("<td class='key'>");
       td_value = $("<td class='value'>");
       td_key.html(key);
-      widget = widgetizer(value);
+      widget = widgetizer[key](value);
       td_value.html(widget.element());
       tr = $("<tr>");
       set_callbacks(tr, widget);
@@ -218,14 +218,23 @@
     data = [
       {
         name: "alice",
-        salary: "100"
+        salary: "100",
+        friends: ["bob", "cal"]
       }, {
-        hello: "world"
+        name: "bob",
+        salary: "500",
+        friends: ["alice", "cal"]
       }
     ];
     schema = function(data) {
       return List(data, function(sublist) {
-        return Hash(sublist, Atom);
+        return Hash(sublist, {
+          name: Atom,
+          salary: Atom,
+          friends: function(array) {
+            return List(array, Atom);
+          }
+        });
       }, save);
     };
     root = schema(data);
