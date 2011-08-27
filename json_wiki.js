@@ -84,7 +84,7 @@
       td_key = $("<td class='key'>");
       td_value = $("<td class='value'>");
       td_key.html(key);
-      widget = widgetizer[key](value);
+      widget = widgetizer[key].widgetizer(value);
       td_value.html(widget.element());
       tr = $("<tr>");
       set_callbacks(tr, widget);
@@ -229,10 +229,19 @@
     schema = function(data) {
       return List(data, function(sublist) {
         return Hash(sublist, {
-          name: Atom,
-          salary: Atom,
-          friends: function(array) {
-            return List(array, Atom);
+          name: {
+            widgetizer: Atom,
+            "default": ''
+          },
+          salary: {
+            widgetizer: Atom,
+            "default": [0]
+          },
+          friends: {
+            widgetizer: function(array) {
+              return List(array, Atom);
+            },
+            "default": []
           }
         });
       }, save);
