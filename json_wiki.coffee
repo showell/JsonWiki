@@ -1,4 +1,5 @@
 Atom = (s) ->
+  s = "" unless s?
   elem = $("<textarea>")
   self =
     element: -> elem
@@ -78,7 +79,9 @@ add_insert_link = (widget, ul, index) ->
   ul.append li
   a.click ->
     new_element = widget.new_element(index)
-    li.append new_element.element().html()
+    console.log "elem", new_element.element()
+    console.log "HTML", new_element.element().html()
+    li.append new_element.element()
 
 ListEditView = (array, widgetizer) ->
   ul = $("<ul>")
@@ -89,11 +92,12 @@ ListEditView = (array, widgetizer) ->
     set: (array) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
-      add_insert_link self, ul, 0
+      insert_links = []
+      insert_links.push add_insert_link(self, ul, 0)
       for w, index in subwidgets
         li = $("<li>").html w.element()
         ul.append li
-        add_insert_link self, ul, index+1
+        insert_links.push add_insert_link(self, ul, index+1)
     new_element: (index) -> 
       widget = widgetizer()
       subwidgets.splice(index, 0, widget)

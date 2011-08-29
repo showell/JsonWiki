@@ -2,6 +2,9 @@
   var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   Atom = function(s) {
     var elem, self;
+    if (s == null) {
+      s = "";
+    }
     elem = $("<textarea>");
     self = {
       element: function() {
@@ -115,7 +118,9 @@
     return a.click(function() {
       var new_element;
       new_element = widget.new_element(index);
-      return li.append(new_element.element().html());
+      console.log("elem", new_element.element());
+      console.log("HTML", new_element.element().html());
+      return li.append(new_element.element());
     });
   };
   ListEditView = function(array, widgetizer) {
@@ -132,16 +137,17 @@
         });
       },
       set: function(array) {
-        var index, li, w, _len, _results;
+        var index, insert_links, li, w, _len, _results;
         ul.empty();
         subwidgets = _.map(array, widgetizer);
-        add_insert_link(self, ul, 0);
+        insert_links = [];
+        insert_links.push(add_insert_link(self, ul, 0));
         _results = [];
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
           li = $("<li>").html(w.element());
           ul.append(li);
-          _results.push(add_insert_link(self, ul, index + 1));
+          _results.push(insert_links.push(add_insert_link(self, ul, index + 1)));
         }
         return _results;
       },
