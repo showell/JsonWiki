@@ -1,5 +1,5 @@
 (function() {
-  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   Atom = function(s) {
     var elem, self;
     elem = $("<textarea>");
@@ -46,11 +46,23 @@
         return div;
       },
       set: function(hash) {
+        if (!(hash != null)) {
+          hash = self["default"]();
+        }
         hash_to_table(table, hash, widgetizer);
         return div.append(table);
       },
       value: function() {
         return table_to_hash(table);
+      },
+      "default": function() {
+        var key, value;
+        hash = {};
+        for (key in widgetizer) {
+          value = widgetizer[key];
+          hash[key] = value["default"];
+        }
+        return hash;
       }
     };
     self.set(hash);
@@ -94,6 +106,18 @@
     }
     return table;
   };
+  add_insert_link = function(widget, ul, index) {
+    var a, li;
+    li = $("<li>");
+    a = $("<a href='#'>").html("insert");
+    li.append(a);
+    ul.append(li);
+    return a.click(function() {
+      var new_element;
+      new_element = widget.new_element(index);
+      return li.append(new_element.element().html());
+    });
+  };
   ListEditView = function(array, widgetizer) {
     var self, subwidgets, ul;
     ul = $("<ul>");
@@ -108,16 +132,24 @@
         });
       },
       set: function(array) {
-        var li, w, _i, _len, _results;
+        var index, li, w, _len, _results;
         ul.empty();
         subwidgets = _.map(array, widgetizer);
+        add_insert_link(self, ul, 0);
         _results = [];
-        for (_i = 0, _len = subwidgets.length; _i < _len; _i++) {
-          w = subwidgets[_i];
+        for (index = 0, _len = subwidgets.length; index < _len; index++) {
+          w = subwidgets[index];
           li = $("<li>").html(w.element());
-          _results.push(ul.append(li));
+          ul.append(li);
+          _results.push(add_insert_link(self, ul, index + 1));
         }
         return _results;
+      },
+      new_element: function(index) {
+        var widget;
+        widget = widgetizer();
+        subwidgets.splice(index, 0, widget);
+        return widget;
       }
     };
     self.set(array);

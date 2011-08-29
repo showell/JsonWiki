@@ -27,10 +27,17 @@ HashEditView = (hash, widgetizer) ->
   self = 
     element: -> div
     set: (hash) ->
+      if !hash?
+        hash = self.default()
       hash_to_table(table, hash, widgetizer)
       div.append table
     value: ->
       table_to_hash(table)
+    default: ->
+      hash = {}
+      for key, value of widgetizer
+        hash[key] = value.default
+      hash
   self.set(hash)
   self
     
@@ -63,7 +70,16 @@ hash_to_table = (table, hash, widgetizer) ->
     tr.append td_key
     tr.append td_value
   table
-  
+
+add_insert_link = (widget, ul, index) ->
+  li = $("<li>")
+  a = $("<a href='#'>").html "insert"
+  li.append a
+  ul.append li
+  a.click ->
+    new_element = widget.new_element(index)
+    li.append new_element.element().html()
+
 ListEditView = (array, widgetizer) ->
   ul = $("<ul>")
   subwidgets = []
@@ -73,9 +89,15 @@ ListEditView = (array, widgetizer) ->
     set: (array) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
-      for w in subwidgets
+      add_insert_link self, ul, 0
+      for w, index in subwidgets
         li = $("<li>").html w.element()
         ul.append li
+        add_insert_link self, ul, index+1
+    new_element: (index) -> 
+      widget = widgetizer()
+      subwidgets.splice(index, 0, widget)
+      widget
   self.set(array)
   self
 
