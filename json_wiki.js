@@ -109,24 +109,30 @@
     }
     return table;
   };
-  add_insert_link = function(widget, ul, index) {
-    var a, li;
+  add_insert_link = function(widget, index) {
+    var a, li, self;
     li = $("<li>");
     a = $("<a href='#'>").html("insert");
     li.append(a);
-    ul.append(li);
-    return a.click(function() {
+    a.click(function() {
       var new_element;
       new_element = widget.new_element(index);
       console.log("elem", new_element.element());
       console.log("HTML", new_element.element().html());
-      return li.append(new_element.element());
+      return widget.update_links(new_element, index);
     });
+    return self = {
+      set: function(idx) {
+        return index = index;
+      },
+      element: li
+    };
   };
   ListEditView = function(array, widgetizer) {
-    var self, subwidgets, ul;
+    var insert_links, self, subwidgets, ul;
     ul = $("<ul>");
     subwidgets = [];
+    insert_links = [];
     self = {
       element: function() {
         return ul;
@@ -137,17 +143,36 @@
         });
       },
       set: function(array) {
-        var index, insert_links, li, w, _len, _results;
+        var index, li, link, w, _len, _results;
         ul.empty();
         subwidgets = _.map(array, widgetizer);
-        insert_links = [];
-        insert_links.push(add_insert_link(self, ul, 0));
+        link = add_insert_link(self, 0);
+        insert_links.push(link);
+        ul.append(link.element);
         _results = [];
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
           li = $("<li>").html(w.element());
           ul.append(li);
-          _results.push(insert_links.push(add_insert_link(self, ul, index + 1)));
+          link = add_insert_link(self, index + 1);
+          insert_links.push(link);
+          _results.push(ul.append(link.element));
+        }
+        return _results;
+      },
+      update_links: function(element, index) {
+        var i, insert_link, li, link, _len, _results;
+        li = $(ul.children()[index * 2]);
+        console.log("li", li);
+        console.log("element", element);
+        li.after(element.element());
+        link = add_insert_link(self, index + 1);
+        insert_links.push(link);
+        element.element().after(link.element);
+        _results = [];
+        for (i = 0, _len = insert_links.length; i < _len; i++) {
+          insert_link = insert_links[i];
+          _results.push(insert_link.set(i));
         }
         return _results;
       },

@@ -72,32 +72,48 @@ hash_to_table = (table, hash, widgetizer) ->
     tr.append td_value
   table
 
-add_insert_link = (widget, ul, index) ->
+add_insert_link = (widget, index) ->
   li = $("<li>")
   a = $("<a href='#'>").html "insert"
   li.append a
-  ul.append li
   a.click ->
     new_element = widget.new_element(index)
     console.log "elem", new_element.element()
     console.log "HTML", new_element.element().html()
-    li.append new_element.element()
+    widget.update_links(new_element, index)
+  self =
+    set: (idx) -> index = index
+    element: li
 
 ListEditView = (array, widgetizer) ->
   ul = $("<ul>")
   subwidgets = []
+  insert_links = []
   self =
     element: -> ul
     value: -> _.map subwidgets, (w) -> w.value()
     set: (array) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
-      insert_links = []
-      insert_links.push add_insert_link(self, ul, 0)
+      link = add_insert_link(self, 0)
+      insert_links.push link
+      ul.append link.element
       for w, index in subwidgets
         li = $("<li>").html w.element()
         ul.append li
-        insert_links.push add_insert_link(self, ul, index+1)
+        link = add_insert_link(self, index+1)
+        insert_links.push link
+        ul.append link.element
+    update_links: (element, index) ->
+      li = $(ul.children()[index*2])
+      console.log "li", li
+      console.log "element", element
+      li.after(element.element())
+      link = add_insert_link(self, index+1)
+      insert_links.push link
+      element.element().after link.element
+      for insert_link, i in insert_links
+        insert_link.set(i)
     new_element: (index) -> 
       widget = widgetizer()
       subwidgets.splice(index, 0, widget)
