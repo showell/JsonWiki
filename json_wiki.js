@@ -1,5 +1,5 @@
 (function() {
-  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   Atom = function(s) {
     var elem, self;
     if (s == null) {
@@ -20,6 +20,19 @@
     self.set(s);
     return self;
   };
+  autosize_textarea = function(textarea, json) {
+    var max_col, row, rows, _i, _len;
+    rows = json.split("\n");
+    textarea.attr("rows", rows.length + 2);
+    max_col = 0;
+    for (_i = 0, _len = rows.length; _i < _len; _i++) {
+      row = rows[_i];
+      if (row.length > max_col) {
+        max_col = row.length;
+      }
+    }
+    return textarea.attr("cols", max_col);
+  };
   JsonRawView = function(array) {
     var div, self, textarea;
     div = $("<div>");
@@ -34,7 +47,14 @@
         return JSON.parse(textarea.val());
       },
       set: function(array) {
-        return textarea.val(JSON.stringify(array, null, " "));
+        var json;
+        json = JSON.stringify(array, null, " ");
+        textarea.val(json);
+        try {
+          return autosize_textarea(textarea, json);
+        } catch (e) {
+
+        }
       }
     };
     self.set(array);

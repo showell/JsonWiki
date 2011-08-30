@@ -7,6 +7,14 @@ Atom = (s) ->
     set: (s) -> elem.val(s)
   self.set(s)
   self
+
+autosize_textarea = (textarea, json) ->
+  rows = json.split("\n")
+  textarea.attr("rows", rows.length + 2)  
+  max_col = 0
+  for row in rows
+    max_col = row.length if row.length > max_col
+  textarea.attr("cols", max_col)
     
 JsonRawView = (array) ->
   div = $("<div>")
@@ -18,7 +26,12 @@ JsonRawView = (array) ->
     value: ->
       JSON.parse textarea.val()
     set: (array) ->
-      textarea.val JSON.stringify(array, null, " ")
+      json = JSON.stringify(array, null, " ")
+      textarea.val json
+      try
+        autosize_textarea textarea, json
+      catch e
+        # need to clean up defaults
   self.set(array)
   self
   
