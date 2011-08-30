@@ -300,13 +300,20 @@
         }
         return _results;
       },
+      wrap: function(w) {
+        var li;
+        li = $("<li>").html(w.element());
+        li.attr("class", "ListWidgetItem");
+        return li;
+      },
       update_links: function(element, index) {
-        var i, insert_link, li, link, _len, _results;
+        var i, insert_link, li, link, new_li, _len, _results;
         li = $(ul.children()[index * 2]);
-        li.after(element.element());
+        new_li = self.wrap(element);
+        li.after(new_li);
         link = add_insert_link(self, index + 1);
         insert_links.push(link);
-        element.element().after(link.element);
+        new_li.after(link.element);
         _results = [];
         for (i = 0, _len = insert_links.length; i < _len; i++) {
           insert_link = insert_links[i];
