@@ -98,7 +98,7 @@ add_insert_link = (widget, index) ->
     set: (idx) -> index = index
     element: li
 
-ListEditView = (array, widgetizer) ->
+ListEditView = (array, widgetizer, default_value) ->
   ul = $("<ul>")
   subwidgets = []
   insert_links = []
@@ -126,7 +126,7 @@ ListEditView = (array, widgetizer) ->
       for insert_link, i in insert_links
         insert_link.set(i)
     new_element: (index) -> 
-      widget = widgetizer()
+      widget = widgetizer(default_value)
       subwidgets.splice(index, 0, widget)
       widget
   self.set(array)
@@ -187,7 +187,7 @@ Hash = (hash, widgetizer, save_method) ->
   create_save_link(self, save_method) if save_method
   self
   
-List = (array, widgetizer, save_method) ->
+List = (array, widgetizer, default_value, save_method) ->
   elem = $("<div>")
   self =
     element: -> elem
@@ -195,7 +195,7 @@ List = (array, widgetizer, save_method) ->
     append: (subelem) -> elem.append subelem
     
   multi_view = MultiView self, [
-    ListEditView(array, widgetizer),
+    ListEditView(array, widgetizer, default_value),
     JsonRawView(array),
   ]
 

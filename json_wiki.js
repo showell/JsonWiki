@@ -148,7 +148,7 @@
       element: li
     };
   };
-  ListEditView = function(array, widgetizer) {
+  ListEditView = function(array, widgetizer, default_value) {
     var insert_links, self, subwidgets, ul;
     ul = $("<ul>");
     subwidgets = [];
@@ -196,7 +196,7 @@
       },
       new_element: function(index) {
         var widget;
-        widget = widgetizer();
+        widget = widgetizer(default_value);
         subwidgets.splice(index, 0, widget);
         return widget;
       }
@@ -276,7 +276,7 @@
     }
     return self;
   };
-  List = function(array, widgetizer, save_method) {
+  List = function(array, widgetizer, default_value, save_method) {
     var elem, multi_view, self;
     elem = $("<div>");
     self = {
@@ -290,7 +290,7 @@
         return elem.append(subelem);
       }
     };
-    multi_view = MultiView(self, [ListEditView(array, widgetizer), JsonRawView(array)]);
+    multi_view = MultiView(self, [ListEditView(array, widgetizer, default_value), JsonRawView(array)]);
     if (save_method) {
       create_save_link(self, save_method);
     }
