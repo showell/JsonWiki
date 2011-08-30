@@ -86,4 +86,28 @@ jQuery(document).ready ->
       
     Hash(data, schema, save_method)
     
-  $("#content").append quantitative_comparison().element()
+  examples = [
+    {
+      description: "Quantitative Comparison"
+      method: quantitative_comparison
+    },
+    {
+      description: "Multiple Choice"
+      method: multiple_choice_question
+    },
+    {
+      description: "Numeric Entry (fraction)"
+      method: fraction_question
+    }
+  ]
+  
+  create_example_link = (example) ->
+    a = $("<a href='#'>").html(example.description)
+    a.click ->
+      $("#content").html example.method().element()
+    $("#menu").append(a)
+    $("#menu").append "<br />"
+  
+  for example in examples
+    create_example_link(example)
+  

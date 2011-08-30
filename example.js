@@ -1,6 +1,6 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, fraction_question, multiple_choice_question, quantitative_comparison, save_method, _ref;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, multiple_choice_question, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     save_method = function(data) {
       return alert("Saving data" + JSON.stringify(data, null, "    "));
@@ -94,6 +94,32 @@
       };
       return Hash(data, schema, save_method);
     };
-    return $("#content").append(quantitative_comparison().element());
+    examples = [
+      {
+        description: "Quantitative Comparison",
+        method: quantitative_comparison
+      }, {
+        description: "Multiple Choice",
+        method: multiple_choice_question
+      }, {
+        description: "Numeric Entry (fraction)",
+        method: fraction_question
+      }
+    ];
+    create_example_link = function(example) {
+      var a;
+      a = $("<a href='#'>").html(example.description);
+      a.click(function() {
+        return $("#content").html(example.method().element());
+      });
+      $("#menu").append(a);
+      return $("#menu").append("<br />");
+    };
+    _results = [];
+    for (_i = 0, _len = examples.length; _i < _len; _i++) {
+      example = examples[_i];
+      _results.push(create_example_link(example));
+    }
+    return _results;
   });
 }).call(this);
