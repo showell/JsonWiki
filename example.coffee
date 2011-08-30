@@ -1,9 +1,6 @@
 jQuery(document).ready ->
   {StringWidget, BooleanWidget, Hash, List} = $.JsonWiki
   
-  save_method = (data) ->
-    alert "Saving data" + JSON.stringify data, null, "    "
-
   HashWidget = (schema) -> (obj) -> Hash obj, schema
   
   quantitative_comparison = ->
@@ -85,25 +82,37 @@ jQuery(document).ready ->
       explanation: StringWidget
       
     Hash(data, schema, save_method)
+
+  generic_preview_method = (widget) ->
+    json = JSON.stringify widget.value(), null, '  '
+    pre = $("<pre>").html json
+    $("#preview").html pre
     
   examples = [
     {
-      description: "Quantitative Comparison"
-      method: quantitative_comparison
-    },
-    {
       description: "Multiple Choice"
       method: multiple_choice_question
+      preview_method: generic_preview_method
+    },
+    {
+      description: "Quantitative Comparison"
+      method: quantitative_comparison
+      preview_method: generic_preview_method
     },
     {
       description: "Numeric Entry (fraction)"
       method: fraction_question
+      preview_method: generic_preview_method
     }
   ]
   
+  save_method = (data) ->
+    alert "Saving data" + JSON.stringify data, null, "    "
+
   create_example_link = (example) ->
     a = $("<a href='#'>").html(example.description)
     a.click ->
+      $("#preview").empty()
       content = $("#content")
       content.empty()
       widget = example.method()
@@ -111,6 +120,11 @@ jQuery(document).ready ->
       save_link.click ->
         save_method widget.value()
       content.append save_link
+      preview_link = $("<a href='#'>").html("preview")
+      preview_link.click ->
+        example.preview_method(widget)
+      content.append "&nbsp;"
+      content.append preview_link
       content.append widget.element()
     $("#menu").append(a)
     $("#menu").append "<br />"

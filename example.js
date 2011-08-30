@@ -1,10 +1,7 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, multiple_choice_question, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
-    save_method = function(data) {
-      return alert("Saving data" + JSON.stringify(data, null, "    "));
-    };
     HashWidget = function(schema) {
       return function(obj) {
         return Hash(obj, schema);
@@ -94,23 +91,36 @@
       };
       return Hash(data, schema, save_method);
     };
+    generic_preview_method = function(widget) {
+      var json, pre;
+      json = JSON.stringify(widget.value(), null, '  ');
+      pre = $("<pre>").html(json);
+      return $("#preview").html(pre);
+    };
     examples = [
       {
-        description: "Quantitative Comparison",
-        method: quantitative_comparison
-      }, {
         description: "Multiple Choice",
-        method: multiple_choice_question
+        method: multiple_choice_question,
+        preview_method: generic_preview_method
+      }, {
+        description: "Quantitative Comparison",
+        method: quantitative_comparison,
+        preview_method: generic_preview_method
       }, {
         description: "Numeric Entry (fraction)",
-        method: fraction_question
+        method: fraction_question,
+        preview_method: generic_preview_method
       }
     ];
+    save_method = function(data) {
+      return alert("Saving data" + JSON.stringify(data, null, "    "));
+    };
     create_example_link = function(example) {
       var a;
       a = $("<a href='#'>").html(example.description);
       a.click(function() {
-        var content, save_link, widget;
+        var content, preview_link, save_link, widget;
+        $("#preview").empty();
         content = $("#content");
         content.empty();
         widget = example.method();
@@ -119,6 +129,12 @@
           return save_method(widget.value());
         });
         content.append(save_link);
+        preview_link = $("<a href='#'>").html("preview");
+        preview_link.click(function() {
+          return example.preview_method(widget);
+        });
+        content.append("&nbsp;");
+        content.append(preview_link);
         return content.append(widget.element());
       });
       $("#menu").append(a);
