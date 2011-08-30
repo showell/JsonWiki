@@ -5,11 +5,27 @@
     save_method = function(data) {
       return console.log(JSON.stringify(data));
     };
-    data = ["apple", "banana", "carrot"];
-    default_answer = "fruit";
+    data = [
+      {
+        choice: "A",
+        answer: "one"
+      }, {
+        choice: "B",
+        answer: "two"
+      }
+    ];
+    default_answer = {
+      choice: "choice",
+      answer: "answer"
+    };
     schema = function(data) {
       return List(data, {
-        widgetizer: Atom,
+        widgetizer: function(hash) {
+          return Hash(hash, {
+            choice: Atom,
+            answer: Atom
+          });
+        },
         default_value: default_answer,
         save_method: save_method
       });

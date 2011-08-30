@@ -70,23 +70,11 @@
         return div;
       },
       set: function(hash) {
-        if (!(hash != null)) {
-          hash = self["default"]();
-        }
         trs = hash_to_table(table, hash, widgetizer);
         return div.append(table);
       },
       value: function() {
         return table_to_hash(trs);
-      },
-      "default": function() {
-        var key, value;
-        hash = {};
-        for (key in widgetizer) {
-          value = widgetizer[key];
-          hash[key] = value["default"];
-        }
-        return hash;
       }
     };
     self.set(hash);
@@ -120,7 +108,7 @@
       td_key = $("<th class='key'>").css("text-align", "left");
       td_value = $("<td class='value'>");
       td_key.html(key);
-      widget = widgetizer[key].widgetizer(value);
+      widget = widgetizer[key](value);
       td_value.html(widget.element());
       tr = $("<tr valign='top'>");
       trs.push(tr);
@@ -196,6 +184,7 @@
       },
       new_element: function(index) {
         var widget;
+        console.log("new_element", default_value);
         widget = widgetizer(default_value);
         subwidgets.splice(index, 0, widget);
         return widget;

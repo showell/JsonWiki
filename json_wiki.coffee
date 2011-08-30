@@ -42,17 +42,10 @@ HashEditView = (hash, widgetizer) ->
   self = 
     element: -> div
     set: (hash) ->
-      if !hash?
-        hash = self.default()
       trs = hash_to_table(table, hash, widgetizer)
       div.append table
     value: ->
       table_to_hash(trs)
-    default: ->
-      hash = {}
-      for key, value of widgetizer
-        hash[key] = value.default
-      hash
   self.set(hash)
   self
     
@@ -77,7 +70,7 @@ hash_to_table = (table, hash, widgetizer) ->
     td_key = $("<th class='key'>").css("text-align", "left")
     td_value = $("<td class='value'>")
     td_key.html(key)
-    widget = widgetizer[key].widgetizer(value)
+    widget = widgetizer[key](value)
     td_value.html(widget.element())
     tr = $("<tr valign='top'>")
     trs.push tr
@@ -125,7 +118,8 @@ ListEditView = (array, widgetizer, default_value) ->
       element.element().after link.element
       for insert_link, i in insert_links
         insert_link.set(i)
-    new_element: (index) -> 
+    new_element: (index) ->
+      console.log "new_element", default_value 
       widget = widgetizer(default_value)
       subwidgets.splice(index, 0, widget)
       widget
