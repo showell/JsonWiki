@@ -25,15 +25,16 @@ JsonRawView = (array) ->
 HashEditView = (hash, widgetizer) ->
   table= $("<table>")
   div = $("<div>")
+  trs = []
   self = 
     element: -> div
     set: (hash) ->
       if !hash?
         hash = self.default()
-      hash_to_table(table, hash, widgetizer)
+      trs = hash_to_table(table, hash, widgetizer)
       div.append table
     value: ->
-      table_to_hash(table)
+      table_to_hash(trs)
     default: ->
       hash = {}
       for key, value of widgetizer
@@ -42,10 +43,9 @@ HashEditView = (hash, widgetizer) ->
   self.set(hash)
   self
     
-table_to_hash = (table) ->
+table_to_hash = (trs) ->
   hash = {}
-  table.find("tr").each (index, tr) ->
-    tr = $(tr)
+  for tr in trs
     key = (tr.data "get_key")()
     value = (tr.data "get_value")()
     hash[key] = value
@@ -59,18 +59,20 @@ set_callbacks = (tr, widget) ->
 
 hash_to_table = (table, hash, widgetizer) ->
   table.empty()
+  trs = []
   for key, value of hash
-    td_key = $("<td class='key'>")
+    td_key = $("<th class='key'>").css("text-align", "left")
     td_value = $("<td class='value'>")
     td_key.html(key)
     widget = widgetizer[key].widgetizer(value)
     td_value.html(widget.element())
-    tr = $("<tr>")
+    tr = $("<tr valign='top'>")
+    trs.push tr
     set_callbacks(tr, widget)
     table.append tr
     tr.append td_key
     tr.append td_value
-  table
+  trs
 
 add_insert_link = (widget, index) ->
   li = $("<li>")
@@ -189,31 +191,34 @@ List = (array, widgetizer, save_method) ->
     
 jQuery(document).ready ->
   save = (data) -> console.log JSON.stringify data
-  data = [
-    {
-      name: "alice"
-      salary: "100"
-      friends: ["bob", "cal"]
-    },
-    {
-      name: "bob"
-      salary: "500"
-      friends: ["alice", "cal"]
-    }
-  ]
+  data = {
+    question:
+      stimulus: "How many fingers?"
+      explanation: "Just count them"
+      answers: [
+        choice: "A"
+        answer: "one"
+        correct: "false"
+        explanation: "one is not enough"
+      ]
+  }
+  simple_text =
+    default: ''
+    widgetizer: Atom
   schema = (data) ->
-    List data,
-      (sublist) -> Hash sublist,
-        name:
-          widgetizer: Atom
-          default: ''
-        salary:
-          widgetizer: Atom
-          default: [0]
-        friends:
-          widgetizer: (array) -> List array, Atom
-          default: []
-      save
+    Hash data,
+      question:
+        default: {},
+        widgetizer: (question) -> Hash question,
+          stimulus: simple_text
+          explanation: simple_text
+          answers:
+            default: []
+            widgetizer: (answers) -> List answers, (answer) -> Hash answer,
+                choice: simple_text
+                answer: simple_text
+                correct: simple_text
+                explanation: simple_text
   root = schema(data)
   $("#content").append root.element()
   

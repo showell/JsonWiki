@@ -41,9 +41,10 @@
     return self;
   };
   HashEditView = function(hash, widgetizer) {
-    var div, self, table;
+    var div, self, table, trs;
     table = $("<table>");
     div = $("<div>");
+    trs = [];
     self = {
       element: function() {
         return div;
@@ -52,11 +53,11 @@
         if (!(hash != null)) {
           hash = self["default"]();
         }
-        hash_to_table(table, hash, widgetizer);
+        trs = hash_to_table(table, hash, widgetizer);
         return div.append(table);
       },
       value: function() {
-        return table_to_hash(table);
+        return table_to_hash(trs);
       },
       "default": function() {
         var key, value;
@@ -71,16 +72,15 @@
     self.set(hash);
     return self;
   };
-  table_to_hash = function(table) {
-    var hash;
+  table_to_hash = function(trs) {
+    var hash, key, tr, value, _i, _len;
     hash = {};
-    table.find("tr").each(function(index, tr) {
-      var key, value;
-      tr = $(tr);
+    for (_i = 0, _len = trs.length; _i < _len; _i++) {
+      tr = trs[_i];
       key = (tr.data("get_key"))();
       value = (tr.data("get_value"))();
-      return hash[key] = value;
-    });
+      hash[key] = value;
+    }
     return hash;
   };
   set_callbacks = function(tr, widget) {
@@ -92,22 +92,24 @@
     });
   };
   hash_to_table = function(table, hash, widgetizer) {
-    var key, td_key, td_value, tr, value, widget;
+    var key, td_key, td_value, tr, trs, value, widget;
     table.empty();
+    trs = [];
     for (key in hash) {
       value = hash[key];
-      td_key = $("<td class='key'>");
+      td_key = $("<th class='key'>").css("text-align", "left");
       td_value = $("<td class='value'>");
       td_key.html(key);
       widget = widgetizer[key].widgetizer(value);
       td_value.html(widget.element());
-      tr = $("<tr>");
+      tr = $("<tr valign='top'>");
+      trs.push(tr);
       set_callbacks(tr, widget);
       table.append(tr);
       tr.append(td_key);
       tr.append(td_value);
     }
-    return table;
+    return trs;
   };
   add_insert_link = function(widget, index) {
     var a, li, self;
@@ -274,40 +276,53 @@
     return self;
   };
   jQuery(document).ready(function() {
-    var data, root, save, schema;
+    var data, root, save, schema, simple_text;
     save = function(data) {
       return console.log(JSON.stringify(data));
     };
-    data = [
-      {
-        name: "alice",
-        salary: "100",
-        friends: ["bob", "cal"]
-      }, {
-        name: "bob",
-        salary: "500",
-        friends: ["alice", "cal"]
-      }
-    ];
-    schema = function(data) {
-      return List(data, function(sublist) {
-        return Hash(sublist, {
-          name: {
-            widgetizer: Atom,
-            "default": ''
-          },
-          salary: {
-            widgetizer: Atom,
-            "default": [0]
-          },
-          friends: {
-            widgetizer: function(array) {
-              return List(array, Atom);
-            },
-            "default": []
+    data = {
+      question: {
+        stimulus: "How many fingers?",
+        explanation: "Just count them",
+        answers: [
+          {
+            choice: "A",
+            answer: "one",
+            correct: "false",
+            explanation: "one is not enough"
           }
-        });
-      }, save);
+        ]
+      }
+    };
+    simple_text = {
+      "default": '',
+      widgetizer: Atom
+    };
+    schema = function(data) {
+      return Hash(data, {
+        question: {
+          "default": {},
+          widgetizer: function(question) {
+            return Hash(question, {
+              stimulus: simple_text,
+              explanation: simple_text,
+              answers: {
+                "default": [],
+                widgetizer: function(answers) {
+                  return List(answers, function(answer) {
+                    return Hash(answer, {
+                      choice: simple_text,
+                      answer: simple_text,
+                      correct: simple_text,
+                      explanation: simple_text
+                    });
+                  });
+                }
+              }
+            });
+          }
+        }
+      });
     };
     root = schema(data);
     return $("#content").append(root.element());
