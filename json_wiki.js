@@ -282,7 +282,7 @@
         });
       },
       set: function(array) {
-        var index, li, link, w, _len, _results;
+        var index, link, w, _len, _results;
         ul.empty();
         subwidgets = _.map(array, widgetizer);
         link = add_insert_link(self, 0);
@@ -291,9 +291,7 @@
         _results = [];
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
-          li = $("<li>").html(w.element());
-          li.attr("class", "ListWidgetItem");
-          ul.append(li);
+          ul.append(self.wrap(w));
           link = add_insert_link(self, index + 1);
           insert_links.push(link);
           _results.push(ul.append(link.element));

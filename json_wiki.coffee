@@ -201,9 +201,7 @@ ListEditView = (array, widgetizer, default_value) ->
       insert_links.push link
       ul.append link.element
       for w, index in subwidgets
-        li = $("<li>").html w.element()
-        li.attr("class", "ListWidgetItem")
-        ul.append li
+        ul.append self.wrap w
         link = add_insert_link(self, index+1)
         insert_links.push link
         ul.append link.element
