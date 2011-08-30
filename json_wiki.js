@@ -1,5 +1,57 @@
 (function() {
   var Atom, BooleanWidget, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  MultiView = function(parent, widgets) {
+    var curr, div, index, self, widget, _i, _len;
+    div = $("<div>");
+    parent.append(div);
+    parent = div;
+    index = 0;
+    curr = widgets[0];
+    self = {
+      value: function() {
+        return curr.value();
+      },
+      toggle: function() {
+        var val;
+        try {
+          val = curr.value();
+        } catch (e) {
+          alert(e);
+          return;
+        }
+        curr.element().hide();
+        index = (index + 1) % widgets.length;
+        curr = widgets[index];
+        curr.set(val);
+        return curr.element().show();
+      }
+    };
+    for (_i = 0, _len = widgets.length; _i < _len; _i++) {
+      widget = widgets[_i];
+      widget.element().hide();
+      parent.append(widget.element());
+    }
+    widgets[0].element().show();
+    create_toggle_link(parent, self.toggle);
+    return self;
+  };
+  create_toggle_link = function(parent, toggle) {
+    var toggle_link;
+    toggle_link = $("<a href='#'>").html("toggle");
+    toggle_link.click(toggle);
+    parent.prepend(toggle_link);
+    return parent.prepend(' ');
+  };
+  create_save_link = function(widget, save_method) {
+    var elem, save_link;
+    save_link = $("<a href='#'>").html("save");
+    save_link.click(function() {
+      return save_method(widget.value());
+    });
+    elem = widget.element();
+    elem.append(' ');
+    return elem.append(save_link);
+  };
   Atom = function(s) {
     var elem, self;
     if (s == null) {
@@ -230,58 +282,6 @@
     };
     self.set(array);
     return self;
-  };
-  create_toggle_link = function(parent, toggle) {
-    var toggle_link;
-    toggle_link = $("<a href='#'>").html("toggle");
-    toggle_link.click(toggle);
-    parent.prepend(toggle_link);
-    return parent.prepend(' ');
-  };
-  MultiView = function(parent, widgets) {
-    var curr, div, index, self, widget, _i, _len;
-    div = $("<div>");
-    parent.append(div);
-    parent = div;
-    index = 0;
-    curr = widgets[0];
-    self = {
-      value: function() {
-        return curr.value();
-      },
-      toggle: function() {
-        var val;
-        try {
-          val = curr.value();
-        } catch (e) {
-          alert(e);
-          return;
-        }
-        curr.element().hide();
-        index = (index + 1) % widgets.length;
-        curr = widgets[index];
-        curr.set(val);
-        return curr.element().show();
-      }
-    };
-    for (_i = 0, _len = widgets.length; _i < _len; _i++) {
-      widget = widgets[_i];
-      widget.element().hide();
-      parent.append(widget.element());
-    }
-    widgets[0].element().show();
-    create_toggle_link(parent, self.toggle);
-    return self;
-  };
-  create_save_link = function(widget, save_method) {
-    var elem, save_link;
-    save_link = $("<a href='#'>").html("save");
-    save_link.click(function() {
-      return save_method(widget.value());
-    });
-    elem = widget.element();
-    elem.append(' ');
-    return elem.append(save_link);
   };
   List = function(array, options) {
     var default_value, elem, multi_view, save_method, self, widgetizer;

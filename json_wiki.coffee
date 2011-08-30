@@ -1,3 +1,44 @@
+MultiView = (parent, widgets) ->
+  div = $("<div>")
+  parent.append div
+  parent = div
+  index = 0
+  curr = widgets[0]
+  self =
+    value: -> curr.value()
+    toggle: ->
+      try
+        val = curr.value()
+      catch e
+        alert e
+        return
+      curr.element().hide()
+      index = (index + 1) % widgets.length
+      curr = widgets[index]
+      curr.set(val)
+      curr.element().show()
+  for widget in widgets
+    widget.element().hide()
+    parent.append widget.element()
+  widgets[0].element().show()
+  create_toggle_link(parent, self.toggle)
+  self
+
+
+create_toggle_link = (parent, toggle) ->
+  toggle_link = $("<a href='#'>").html "toggle"
+  toggle_link.click toggle
+  parent.prepend toggle_link
+  parent.prepend ' '
+
+create_save_link = (widget, save_method) ->
+  save_link = $("<a href='#'>").html("save")
+  save_link.click ->
+    save_method widget.value()
+  elem = widget.element()
+  elem.append ' '
+  elem.append save_link
+
 Atom = (s) ->
   s = "" unless s?
   elem = $("<textarea>")
@@ -151,46 +192,6 @@ ListEditView = (array, widgetizer, default_value) ->
       widget
   self.set(array)
   self
-
-create_toggle_link = (parent, toggle) ->
-  toggle_link = $("<a href='#'>").html "toggle"
-  toggle_link.click toggle
-  parent.prepend toggle_link
-  parent.prepend ' '
-
-MultiView = (parent, widgets) ->
-  div = $("<div>")
-  parent.append div
-  parent = div
-  index = 0
-  curr = widgets[0]
-  self =
-    value: -> curr.value()
-    toggle: ->
-      try
-        val = curr.value()
-      catch e
-        alert e
-        return
-      curr.element().hide()
-      index = (index + 1) % widgets.length
-      curr = widgets[index]
-      curr.set(val)
-      curr.element().show()
-  for widget in widgets
-    widget.element().hide()
-    parent.append widget.element()
-  widgets[0].element().show()
-  create_toggle_link(parent, self.toggle)
-  self
-
-create_save_link = (widget, save_method) ->
-  save_link = $("<a href='#'>").html("save")
-  save_link.click ->
-    save_method widget.value()
-  elem = widget.element()
-  elem.append ' '
-  elem.append save_link
 
 List = (array, options) ->
   {widgetizer, default_value, save_method} = options
