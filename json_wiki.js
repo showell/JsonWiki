@@ -119,8 +119,6 @@
     a.click(function() {
       var new_element;
       new_element = widget.new_element(index);
-      console.log("elem", new_element.element());
-      console.log("HTML", new_element.element().html());
       return widget.update_links(new_element, index);
     });
     return self = {
@@ -165,8 +163,6 @@
       update_links: function(element, index) {
         var i, insert_link, li, link, _len, _results;
         li = $(ul.children()[index * 2]);
-        console.log("li", li);
-        console.log("element", element);
         li.after(element.element());
         link = add_insert_link(self, index + 1);
         insert_links.push(link);
@@ -322,7 +318,7 @@
             });
           }
         }
-      });
+      }, save);
     };
     root = schema(data);
     return $("#content").append(root.element());

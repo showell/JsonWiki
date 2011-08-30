@@ -80,8 +80,6 @@ add_insert_link = (widget, index) ->
   li.append a
   a.click ->
     new_element = widget.new_element(index)
-    console.log "elem", new_element.element()
-    console.log "HTML", new_element.element().html()
     widget.update_links(new_element, index)
   self =
     set: (idx) -> index = index
@@ -108,8 +106,6 @@ ListEditView = (array, widgetizer) ->
         ul.append link.element
     update_links: (element, index) ->
       li = $(ul.children()[index*2])
-      console.log "li", li
-      console.log "element", element
       li.after(element.element())
       link = add_insert_link(self, index+1)
       insert_links.push link
@@ -219,6 +215,7 @@ jQuery(document).ready ->
                 answer: simple_text
                 correct: simple_text
                 explanation: simple_text
+      save
   root = schema(data)
   $("#content").append root.element()
   
