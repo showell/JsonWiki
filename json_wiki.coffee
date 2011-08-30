@@ -177,15 +177,19 @@ hash_to_table = (table, hash, widgetizer) ->
     tr.append td_value
   trs
 
-add_insert_link = (widget, index) ->
+make_insert_link = (widget, index) ->
   li = $("<li>")
-  a = $("<a href='#'>").html "insert"
+  a = $("<a href='#'>")
   li.append a
   a.click ->
     widget.insert_element_at_index(index)
   self =
-    set: (idx) -> index = index
+    set: (idx) ->
+      index = index
+      a.html "insert element #{index}"
     element: li
+  self.set(index)
+  self
 
 ListEditView = (array, widgetizer, default_value) ->
   ul = $("<ul>")
@@ -198,12 +202,12 @@ ListEditView = (array, widgetizer, default_value) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
       insert_links = []
-      link = add_insert_link(self, 0)
+      link = make_insert_link(self, 0)
       insert_links.push link
       ul.append link.element
       for w, index in subwidgets
         ul.append self.wrap w
-        link = add_insert_link(self, index+1)
+        link = make_insert_link(self, index+1)
         insert_links.push link
         ul.append link.element
         
@@ -217,8 +221,8 @@ ListEditView = (array, widgetizer, default_value) ->
       li = $(ul.children()[index*2])
       new_li = self.wrap(new_element)
       li.after(new_li)
-      link = add_insert_link(self, index+1)
-      insert_links.push link
+      link = make_insert_link(self, index+1)
+      insert_links.splice(index+1, 0, link)
       new_li.after link.element
       for insert_link, i in insert_links
         insert_link.set(i)

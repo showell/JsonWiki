@@ -1,5 +1,5 @@
 (function() {
-  var BooleanWidget, Hash, HashEditView, HtmlView, JsonRawView, List, ListEditView, MultiView, StringWidget, TextareaWidget, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  var BooleanWidget, Hash, HashEditView, HtmlView, JsonRawView, List, ListEditView, MultiView, StringWidget, TextareaWidget, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, make_insert_link, set_callbacks, table_to_hash;
   MultiView = function(parent, widgets) {
     var curr, div, index, self, widget, _i, _len;
     div = $("<div>");
@@ -250,20 +250,23 @@
     }
     return trs;
   };
-  add_insert_link = function(widget, index) {
+  make_insert_link = function(widget, index) {
     var a, li, self;
     li = $("<li>");
-    a = $("<a href='#'>").html("insert");
+    a = $("<a href='#'>");
     li.append(a);
     a.click(function() {
       return widget.insert_element_at_index(index);
     });
-    return self = {
+    self = {
       set: function(idx) {
-        return index = index;
+        index = index;
+        return a.html("insert element " + index);
       },
       element: li
     };
+    self.set(index);
+    return self;
   };
   ListEditView = function(array, widgetizer, default_value) {
     var insert_links, self, subwidgets, ul;
@@ -284,14 +287,14 @@
         ul.empty();
         subwidgets = _.map(array, widgetizer);
         insert_links = [];
-        link = add_insert_link(self, 0);
+        link = make_insert_link(self, 0);
         insert_links.push(link);
         ul.append(link.element);
         _results = [];
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
           ul.append(self.wrap(w));
-          link = add_insert_link(self, index + 1);
+          link = make_insert_link(self, index + 1);
           insert_links.push(link);
           _results.push(ul.append(link.element));
         }
@@ -309,8 +312,8 @@
         li = $(ul.children()[index * 2]);
         new_li = self.wrap(new_element);
         li.after(new_li);
-        link = add_insert_link(self, index + 1);
-        insert_links.push(link);
+        link = make_insert_link(self, index + 1);
+        insert_links.splice(index + 1, 0, link);
         new_li.after(link.element);
         _results = [];
         for (i = 0, _len = insert_links.length; i < _len; i++) {
