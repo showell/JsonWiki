@@ -3,29 +3,30 @@ jQuery(document).ready ->
   
   save_method = (data) -> console.log JSON.stringify data
   
-  data = [
-    {
-      choice: "A",
-      answer: "one",
-    },
-    {
-      choice: "B",
-      answer: "two",
-    }
-  ]
+  data = 
+    answers: [
+      {
+        choice: "A",
+        answer: "one",
+      },
+      {
+        choice: "B",
+        answer: "two",
+      }
+    ]
   
   default_answer = {
     choice: "choice",
     answer: "answer",
   }
   
-  schema = (data) ->
-    List data, 
-      widgetizer: (hash) -> Hash hash,
-        choice: Atom
-        answer: Atom
-      default_value: default_answer
-      save_method: save_method
+  schema = (data) -> Hash data,
+    answers: (answers) -> List answers, 
+        widgetizer: (answer) -> Hash answer,
+          choice: Atom
+          answer: Atom
+        default_value: default_answer
+        save_method: save_method
   
   # data = {
   #   question:

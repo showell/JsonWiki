@@ -5,29 +5,35 @@
     save_method = function(data) {
       return console.log(JSON.stringify(data));
     };
-    data = [
-      {
-        choice: "A",
-        answer: "one"
-      }, {
-        choice: "B",
-        answer: "two"
-      }
-    ];
+    data = {
+      answers: [
+        {
+          choice: "A",
+          answer: "one"
+        }, {
+          choice: "B",
+          answer: "two"
+        }
+      ]
+    };
     default_answer = {
       choice: "choice",
       answer: "answer"
     };
     schema = function(data) {
-      return List(data, {
-        widgetizer: function(hash) {
-          return Hash(hash, {
-            choice: Atom,
-            answer: Atom
+      return Hash(data, {
+        answers: function(answers) {
+          return List(answers, {
+            widgetizer: function(answer) {
+              return Hash(answer, {
+                choice: Atom,
+                answer: Atom
+              });
+            },
+            default_value: default_answer,
+            save_method: save_method
           });
-        },
-        default_value: default_answer,
-        save_method: save_method
+        }
       });
     };
     root = schema(data);

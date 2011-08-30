@@ -34,6 +34,22 @@ JsonRawView = (array) ->
         # need to clean up defaults
   self.set(array)
   self
+
+
+Hash = (hash, widgetizer, save_method) ->
+  elem = $("<div>")
+  self =
+    element: -> elem
+    value: -> multi_view.value()
+    append: (subelem) -> elem.append subelem
+
+  multi_view = MultiView self, [
+    HashEditView(hash, widgetizer),
+    JsonRawView(hash),
+  ]
+
+  create_save_link(self, save_method) if save_method
+  self
   
 HashEditView = (hash, widgetizer) ->
   table= $("<table>")
@@ -166,21 +182,6 @@ create_save_link = (widget, save_method) ->
   elem.append ' '
   elem.append save_link
 
-Hash = (hash, widgetizer, save_method) ->
-  elem = $("<div>")
-  self =
-    element: -> elem
-    value: -> multi_view.value()
-    append: (subelem) -> elem.append subelem
-
-  multi_view = MultiView self, [
-    HashEditView(hash, widgetizer),
-    JsonRawView(hash),
-  ]
-
-  create_save_link(self, save_method) if save_method
-  self
-  
 List = (array, options) ->
   {widgetizer, default_value, save_method} = options
   elem = $("<div>")

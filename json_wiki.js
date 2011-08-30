@@ -60,6 +60,26 @@
     self.set(array);
     return self;
   };
+  Hash = function(hash, widgetizer, save_method) {
+    var elem, multi_view, self;
+    elem = $("<div>");
+    self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return multi_view.value();
+      },
+      append: function(subelem) {
+        return elem.append(subelem);
+      }
+    };
+    multi_view = MultiView(self, [HashEditView(hash, widgetizer), JsonRawView(hash)]);
+    if (save_method) {
+      create_save_link(self, save_method);
+    }
+    return self;
+  };
   HashEditView = function(hash, widgetizer) {
     var div, self, table, trs;
     table = $("<table>");
@@ -244,26 +264,6 @@
     elem = widget.element();
     elem.append(' ');
     return elem.append(save_link);
-  };
-  Hash = function(hash, widgetizer, save_method) {
-    var elem, multi_view, self;
-    elem = $("<div>");
-    self = {
-      element: function() {
-        return elem;
-      },
-      value: function() {
-        return multi_view.value();
-      },
-      append: function(subelem) {
-        return elem.append(subelem);
-      }
-    };
-    multi_view = MultiView(self, [HashEditView(hash, widgetizer), JsonRawView(hash)]);
-    if (save_method) {
-      create_save_link(self, save_method);
-    }
-    return self;
   };
   List = function(array, options) {
     var default_value, elem, multi_view, save_method, self, widgetizer;
