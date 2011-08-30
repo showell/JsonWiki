@@ -185,44 +185,9 @@ List = (array, widgetizer, save_method) ->
   create_save_link(self, save_method) if save_method
   self
     
-jQuery(document).ready ->
-  save = (data) -> console.log JSON.stringify data
-  data = {
-    question:
-      stimulus: "How many fingers?"
-      explanation: "Just count them"
-      answers: [
-        choice: "A"
-        answer: "one"
-        correct: "false"
-        explanation: "one is not enough"
-      ]
-  }
-  simple_text =
-    default: ''
-    widgetizer: Atom
-  simple_hash = (schema) ->
-    default: {}
-    widgetizer: (h) -> Hash h, schema
-  simple_list = (schema) ->
-    default: []
-    widgetizer: (answers) -> List answers, schema
-       
-  schema = (data) ->
-    Hash data,
-      question:
-        simple_hash(
-          stimulus: simple_text
-          explanation: simple_text
-          answers:
-            simple_list (answer) -> Hash answer,
-              choice: simple_text
-              answer: simple_text
-              correct: simple_text
-              explanation: simple_text
-        )
-      save
-  root = schema(data)
-  $("#content").append root.element()
+$.JsonWiki =
+  Hash: Hash
+  List: List
+  Atom: Atom
   
   
