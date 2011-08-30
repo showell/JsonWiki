@@ -104,7 +104,14 @@ jQuery(document).ready ->
   create_example_link = (example) ->
     a = $("<a href='#'>").html(example.description)
     a.click ->
-      $("#content").html example.method().element()
+      content = $("#content")
+      content.empty()
+      widget = example.method()
+      save_link = $("<a href='#'>").html("save")
+      save_link.click ->
+        save_method widget.value()
+      content.append save_link
+      content.append widget.element()
     $("#menu").append(a)
     $("#menu").append "<br />"
   

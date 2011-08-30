@@ -1,44 +1,12 @@
-MultiView = (parent, widgets) ->
-  div = $("<div>")
-  parent.append div
-  parent = div
-  index = 0
-  curr = widgets[0]
-  self =
-    value: -> curr.value()
-    toggle: ->
-      try
-        val = curr.value()
-      catch e
-        alert e
-        return
-      curr.element().hide()
-      index = (index + 1) % widgets.length
-      curr = widgets[index]
-      curr.set(val)
-      curr.element().show()
-  for widget in widgets
-    widget.element().hide()
-    parent.append widget.element()
-  widgets[0].element().show()
-  create_toggle_link(parent, self.toggle)
-  self
+autosize_textarea = (textarea, s) ->
+  rows = s.split("\n")
+  textarea.attr("rows", rows.length + 2)  
+  max_col = 0
+  for row in rows
+    max_col = row.length if row.length > max_col
+  textarea.attr("cols", max_col)
 
-
-create_toggle_link = (parent, toggle) ->
-  toggle_link = $("<a href='#'>").html "toggle"
-  toggle_link.click toggle
-  parent.prepend toggle_link
-  parent.prepend " "
-
-create_save_link = (widget, save_method) ->
-  save_link = $("<a href='#'>").html("save")
-  save_link.click ->
-    save_method widget.value()
-  elem = widget.element()
-  elem.prepend save_link
-
-TextareaWidget = (s) ->
+StringWidget = (s) ->
   s = "" unless s?
   div = $("<div>")
   div.append "<br />"
@@ -53,32 +21,6 @@ TextareaWidget = (s) ->
   self.set(s)
   self
   
-HtmlView = (s) ->
-  elem = $("<pre>")
-  self =
-    element: -> elem
-    value: -> s
-    set: (val) ->
-      s = val
-      elem.html(s)
-  self.set(s)
-  self
-
-StringWidget = (s, save_method) ->
-  elem = $("<div>")
-  self =
-    element: -> elem
-    value: -> multi_view.value()
-    append: (subelem) -> elem.append subelem
-    
-  multi_view = MultiView self, [
-    TextareaWidget(s),
-    HtmlView(s)
-  ]
-
-  create_save_link(self, save_method) if save_method
-  self 
- 
 BooleanWidget = (bool) ->
   bool = !!bool
   elem = $("<input type='checkbox'>")
@@ -89,50 +31,7 @@ BooleanWidget = (bool) ->
   self.set(bool)
   self
 
-autosize_textarea = (textarea, s) ->
-  rows = s.split("\n")
-  textarea.attr("rows", rows.length + 2)  
-  max_col = 0
-  for row in rows
-    max_col = row.length if row.length > max_col
-  textarea.attr("cols", max_col)
-    
-JsonRawView = (array) ->
-  div = $("<div>")
-  textarea = $("<textarea>").attr("rows", 10)
-  textarea.css("font-size", "15px")
-  div.append textarea
-  self =
-    element: -> div
-    value: ->
-      JSON.parse textarea.val()
-    set: (array) ->
-      json = JSON.stringify(array, null, " ")
-      textarea.val json
-      try
-        autosize_textarea textarea, json
-      catch e
-        # need to clean up defaults
-  self.set(array)
-  self
-
-
-Hash = (hash, widgetizer, save_method) ->
-  elem = $("<div>")
-  self =
-    element: -> elem
-    value: -> multi_view.value()
-    append: (subelem) -> elem.append subelem
-
-  multi_view = MultiView self, [
-    HashEditView(hash, widgetizer),
-    JsonRawView(hash),
-  ]
-
-  create_save_link(self, save_method) if save_method
-  self
-  
-HashEditView = (hash, widgetizer) ->
+Hash = (hash, widgetizer) ->
   table= $("<table>")
   div = $("<div>")
   trs = []
@@ -191,7 +90,9 @@ make_insert_link = (widget, index) ->
   self.set(index)
   self
 
-ListEditView = (array, widgetizer, default_value) ->
+
+List = (array, options) ->
+  {widgetizer, default_value, save_method} = options
   ul = $("<ul>")
   subwidgets = []
   insert_links = []
@@ -234,22 +135,6 @@ ListEditView = (array, widgetizer, default_value) ->
   self.set(array)
   self
 
-List = (array, options) ->
-  {widgetizer, default_value, save_method} = options
-  elem = $("<div>")
-  self =
-    element: -> elem
-    value: -> multi_view.value()
-    append: (subelem) -> elem.append subelem
-    
-  multi_view = MultiView self, [
-    ListEditView(array, widgetizer, default_value),
-    JsonRawView(array),
-  ]
-
-  create_save_link(self, save_method) if save_method
-  self
-    
 $.JsonWiki =
   Hash: Hash
   List: List

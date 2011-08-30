@@ -110,7 +110,16 @@
       var a;
       a = $("<a href='#'>").html(example.description);
       a.click(function() {
-        return $("#content").html(example.method().element());
+        var content, save_link, widget;
+        content = $("#content");
+        content.empty();
+        widget = example.method();
+        save_link = $("<a href='#'>").html("save");
+        save_link.click(function() {
+          return save_method(widget.value());
+        });
+        content.append(save_link);
+        return content.append(widget.element());
       });
       $("#menu").append(a);
       return $("#menu").append("<br />");
