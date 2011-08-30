@@ -134,8 +134,12 @@ MultiView = (parent, widgets) ->
   self =
     value: -> curr.value()
     toggle: ->
+      try
+        val = curr.value()
+      catch e
+        alert e
+        return
       curr.element().hide()
-      val = curr.value()
       index = (index + 1) % widgets.length
       curr = widgets[index]
       curr.set(val)
