@@ -43,12 +43,14 @@ TextareaWidget = (s) ->
   s = "" unless s?
   div = $("<div>")
   div.append "<br />"
-  elem = $("<textarea>")
-  div.append elem
+  textarea = $("<textarea>")
+  div.append textarea
   self =
     element: -> div
-    value: -> elem.val()
-    set: (s) -> elem.val(s)
+    value: -> textarea.val()
+    set: (s) ->
+      textarea.val(s)
+      autosize_textarea(textarea, s)
   self.set(s)
   self
   
@@ -88,8 +90,8 @@ BooleanWidget = (bool) ->
   self.set(bool)
   self
 
-autosize_textarea = (textarea, json) ->
-  rows = json.split("\n")
+autosize_textarea = (textarea, s) ->
+  rows = s.split("\n")
   textarea.attr("rows", rows.length + 2)  
   max_col = 0
   for row in rows

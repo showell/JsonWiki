@@ -53,23 +53,24 @@
     return elem.append(save_link);
   };
   TextareaWidget = function(s) {
-    var div, elem, self;
+    var div, self, textarea;
     if (s == null) {
       s = "";
     }
     div = $("<div>");
     div.append("<br />");
-    elem = $("<textarea>");
-    div.append(elem);
+    textarea = $("<textarea>");
+    div.append(textarea);
     self = {
       element: function() {
         return div;
       },
       value: function() {
-        return elem.val();
+        return textarea.val();
       },
       set: function(s) {
-        return elem.val(s);
+        textarea.val(s);
+        return autosize_textarea(textarea, s);
       }
     };
     self.set(s);
@@ -131,9 +132,9 @@
     self.set(bool);
     return self;
   };
-  autosize_textarea = function(textarea, json) {
+  autosize_textarea = function(textarea, s) {
     var max_col, row, rows, _i, _len;
-    rows = json.split("\n");
+    rows = s.split("\n");
     textarea.attr("rows", rows.length + 2);
     max_col = 0;
     for (_i = 0, _len = rows.length; _i < _len; _i++) {
