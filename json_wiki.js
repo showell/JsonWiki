@@ -1,5 +1,5 @@
 (function() {
-  var Atom, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  var Atom, BooleanWidget, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   Atom = function(s) {
     var elem, self;
     if (s == null) {
@@ -18,6 +18,24 @@
       }
     };
     self.set(s);
+    return self;
+  };
+  BooleanWidget = function(bool) {
+    var elem, self;
+    bool = !!bool;
+    elem = $("<input type='checkbox'>");
+    self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return !!elem.prop("checked");
+      },
+      set: function(bool) {
+        return elem.prop("checked", bool);
+      }
+    };
+    self.set(bool);
     return self;
   };
   autosize_textarea = function(textarea, json) {
@@ -289,6 +307,7 @@
   $.JsonWiki = {
     Hash: Hash,
     List: List,
-    Atom: Atom
+    Atom: Atom,
+    BooleanWidget: BooleanWidget
   };
 }).call(this);

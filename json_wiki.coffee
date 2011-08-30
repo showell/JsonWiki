@@ -7,6 +7,16 @@ Atom = (s) ->
     set: (s) -> elem.val(s)
   self.set(s)
   self
+  
+BooleanWidget = (bool) ->
+  bool = !!bool
+  elem = $("<input type='checkbox'>")
+  self =
+    element: -> elem
+    value: -> !!elem.prop("checked")
+    set: (bool) -> elem.prop("checked", bool)
+  self.set(bool)
+  self
 
 autosize_textarea = (textarea, json) ->
   rows = json.split("\n")
@@ -202,5 +212,6 @@ $.JsonWiki =
   Hash: Hash
   List: List
   Atom: Atom
+  BooleanWidget: BooleanWidget
   
   

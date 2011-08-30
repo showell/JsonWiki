@@ -1,7 +1,7 @@
 (function() {
   jQuery(document).ready(function() {
-    var Atom, Hash, HashWidget, List, data, default_answer, hash_schema, root_widget, save_method, _ref;
-    _ref = $.JsonWiki, Atom = _ref.Atom, Hash = _ref.Hash, List = _ref.List;
+    var Atom, BooleanWidget, Hash, HashWidget, List, data, default_answer, hash_schema, root_widget, save_method, _ref;
+    _ref = $.JsonWiki, Atom = _ref.Atom, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     save_method = function(data) {
       return console.log(JSON.stringify(data));
     };
@@ -13,11 +13,13 @@
           {
             choice: "A",
             answer: "one",
-            explanation: "one is not enough"
+            explanation: "one is not enough",
+            correct: false
           }, {
             choice: "B",
-            answer: "two",
-            explanation: "still need to go higher"
+            answer: "five",
+            explanation: "we count the thumb",
+            correct: true
           }
         ]
       }
@@ -40,7 +42,8 @@
             widgetizer: HashWidget({
               choice: Atom,
               answer: Atom,
-              explanation: Atom
+              explanation: Atom,
+              correct: BooleanWidget
             }),
             default_value: default_answer
           });

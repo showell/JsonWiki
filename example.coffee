@@ -1,5 +1,5 @@
 jQuery(document).ready ->
-  {Atom, Hash, List} = $.JsonWiki
+  {Atom, BooleanWidget, Hash, List} = $.JsonWiki
   
   save_method = (data) -> console.log JSON.stringify data
   
@@ -12,11 +12,13 @@ jQuery(document).ready ->
           choice: "A",
           answer: "one",
           explanation: "one is not enough"
+          correct: false
         },
         {
           choice: "B",
-          answer: "two",
-          explanation: "still need to go higher"
+          answer: "five",
+          explanation: "we count the thumb"
+          correct: true
         }
       ]
   
@@ -36,6 +38,7 @@ jQuery(document).ready ->
             choice: Atom
             answer: Atom
             explanation: Atom
+            correct: BooleanWidget
           default_value: default_answer
   root_widget = Hash(data, hash_schema, save_method)
 
