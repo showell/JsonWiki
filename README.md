@@ -1,48 +1,34 @@
 <p>
-This doc describes a wiki for editing generalized data.
+This doc describes a generalized editor for JSON-like data.
 <p>
-All objects can be shown in several modes:
-
-* raw edit
-* raw render
-* styled edit
-* styled render
-* expanded or collapsed
-
+Assume your JSON objects are tree-like widgets built from hashes, arrays, and primitives. 
 <p>
-All objects must conform to one of the following structures:
+All objects can be editing with a recursive widget:
 
-* atom
-* list
-* hash
+* hashes map to HTML tables
+* lists map to HTML lists
+* primitives map to HTML primitives like textarea, checkboxes etc.
 
 <p>
-All data gets persisted:
-
-* all changes are inherently persisted locally
-* some objects are only persisted through their parents
-* hitting SAVE results in data being published to a remote source
+To make a generalized editor, you want "branch widgets" to be composed from arbitrary "child widgets,"
+which can be branches themselves, or leaves.
 
 <p>
-All objects are addressable.  Examples:
-
-* ["readme.txt"]
-* ["questions", 1, "answers", "a"]
-* ["departments", "accounting", "employees", "bob"]
-
-<p>
-All objects support these methods, with defaults provided for most:
-
-* save
-* raw_edit
-* modify
-* value
-* view
-* expand
-* collapse
-* refresh_from_remote
-* search
-* add_item
-* fetch
+All widgets support a simple and consisent API:
+* (construction)
 * element
+* value
+<p>
+All your programming effort can focus on the trickier branch elements:
+* arrays need insert/delete
+* some hashes can be modeled as simple HTML tables  
+* if hash keys are dynamic, then you need to support insert/delete
+<p>
+If the widgets are robust for arrays and hashing, you can plug in all kinds of leaf widgets, as long as those widgets
+are either built to play nice with the branch widgets.  If leaf widgets don't play nice out of the box, it's simple to wrap
+them.  
 
+<p>
+Everything else should be decoupled from your basic editor:
+* saving - let the persistence layer handle
+* preview - have a separate preview method
