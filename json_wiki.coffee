@@ -204,6 +204,9 @@ jQuery(document).ready ->
   simple_hash = (schema) ->
     default: {}
     widgetizer: (h) -> Hash h, schema
+  simple_list = (schema) ->
+    default: []
+    widgetizer: (answers) -> List answers, schema
        
   schema = (data) ->
     Hash data,
@@ -212,12 +215,11 @@ jQuery(document).ready ->
           stimulus: simple_text
           explanation: simple_text
           answers:
-            default: []
-            widgetizer: (answers) -> List answers, (answer) -> Hash answer,
-                choice: simple_text
-                answer: simple_text
-                correct: simple_text
-                explanation: simple_text
+            simple_list (answer) -> Hash answer,
+              choice: simple_text
+              answer: simple_text
+              correct: simple_text
+              explanation: simple_text
         )
       save
   root = schema(data)

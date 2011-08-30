@@ -272,7 +272,7 @@
     return self;
   };
   jQuery(document).ready(function() {
-    var data, root, save, schema, simple_hash, simple_text;
+    var data, root, save, schema, simple_hash, simple_list, simple_text;
     save = function(data) {
       return console.log(JSON.stringify(data));
     };
@@ -302,24 +302,27 @@
         }
       };
     };
+    simple_list = function(schema) {
+      return {
+        "default": [],
+        widgetizer: function(answers) {
+          return List(answers, schema);
+        }
+      };
+    };
     schema = function(data) {
       return Hash(data, {
         question: simple_hash({
           stimulus: simple_text,
           explanation: simple_text,
-          answers: {
-            "default": [],
-            widgetizer: function(answers) {
-              return List(answers, function(answer) {
-                return Hash(answer, {
-                  choice: simple_text,
-                  answer: simple_text,
-                  correct: simple_text,
-                  explanation: simple_text
-                });
-              });
-            }
-          }
+          answers: simple_list(function(answer) {
+            return Hash(answer, {
+              choice: simple_text,
+              answer: simple_text,
+              correct: simple_text,
+              explanation: simple_text
+            });
+          })
         })
       }, save);
     };
