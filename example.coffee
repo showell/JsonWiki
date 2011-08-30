@@ -9,10 +9,13 @@ jQuery(document).ready ->
     "carrot"
   ]
   
-  default_value = "fruit"
+  default_answer = "fruit"
   
   schema = (data) ->
-    List data, Atom, default_value, save_method
+    List data, 
+      widgetizer: Atom
+      default_value: default_answer
+      save_method: save_method
   
   # data = {
   #   question:

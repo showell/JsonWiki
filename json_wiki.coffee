@@ -187,7 +187,8 @@ Hash = (hash, widgetizer, save_method) ->
   create_save_link(self, save_method) if save_method
   self
   
-List = (array, widgetizer, default_value, save_method) ->
+List = (array, options) ->
+  {widgetizer, default_value, save_method} = options
   elem = $("<div>")
   self =
     element: -> elem

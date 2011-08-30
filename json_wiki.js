@@ -276,8 +276,9 @@
     }
     return self;
   };
-  List = function(array, widgetizer, default_value, save_method) {
-    var elem, multi_view, self;
+  List = function(array, options) {
+    var default_value, elem, multi_view, save_method, self, widgetizer;
+    widgetizer = options.widgetizer, default_value = options.default_value, save_method = options.save_method;
     elem = $("<div>");
     self = {
       element: function() {
