@@ -29,7 +29,7 @@ create_toggle_link = (parent, toggle) ->
   toggle_link = $("<a href='#'>").html "toggle"
   toggle_link.click toggle
   parent.prepend toggle_link
-  parent.prepend ' '
+  parent.prepend " "
 
 create_save_link = (widget, save_method) ->
   save_link = $("<a href='#'>").html("save")
@@ -39,16 +39,45 @@ create_save_link = (widget, save_method) ->
   elem.append ' '
   elem.append save_link
 
-Atom = (s) ->
+TextareaWidget = (s) ->
   s = "" unless s?
+  div = $("<div>")
+  div.append "<br />"
   elem = $("<textarea>")
+  div.append elem
   self =
-    element: -> elem
+    element: -> div
     value: -> elem.val()
     set: (s) -> elem.val(s)
   self.set(s)
   self
   
+HtmlView = (s) ->
+  elem = $("<pre>")
+  self =
+    element: -> elem
+    value: -> s
+    set: (val) ->
+      s = val
+      elem.html(s)
+  self.set(s)
+  self
+
+StringWidget = (s, save_method) ->
+  elem = $("<div>")
+  self =
+    element: -> elem
+    value: -> multi_view.value()
+    append: (subelem) -> elem.append subelem
+    
+  multi_view = MultiView self, [
+    TextareaWidget(s),
+    HtmlView(s)
+  ]
+
+  create_save_link(self, save_method) if save_method
+  self 
+ 
 BooleanWidget = (bool) ->
   bool = !!bool
   elem = $("<input type='checkbox'>")
@@ -212,7 +241,7 @@ List = (array, options) ->
 $.JsonWiki =
   Hash: Hash
   List: List
-  Atom: Atom
+  StringWidget: StringWidget
   BooleanWidget: BooleanWidget
   
   

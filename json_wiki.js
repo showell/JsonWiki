@@ -1,5 +1,5 @@
 (function() {
-  var Atom, BooleanWidget, Hash, HashEditView, JsonRawView, List, ListEditView, MultiView, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
+  var BooleanWidget, Hash, HashEditView, HtmlView, JsonRawView, List, ListEditView, MultiView, StringWidget, TextareaWidget, add_insert_link, autosize_textarea, create_save_link, create_toggle_link, hash_to_table, set_callbacks, table_to_hash;
   MultiView = function(parent, widgets) {
     var curr, div, index, self, widget, _i, _len;
     div = $("<div>");
@@ -40,7 +40,7 @@
     toggle_link = $("<a href='#'>").html("toggle");
     toggle_link.click(toggle);
     parent.prepend(toggle_link);
-    return parent.prepend(' ');
+    return parent.prepend(" ");
   };
   create_save_link = function(widget, save_method) {
     var elem, save_link;
@@ -52,15 +52,18 @@
     elem.append(' ');
     return elem.append(save_link);
   };
-  Atom = function(s) {
-    var elem, self;
+  TextareaWidget = function(s) {
+    var div, elem, self;
     if (s == null) {
       s = "";
     }
+    div = $("<div>");
+    div.append("<br />");
     elem = $("<textarea>");
+    div.append(elem);
     self = {
       element: function() {
-        return elem;
+        return div;
       },
       value: function() {
         return elem.val();
@@ -70,6 +73,44 @@
       }
     };
     self.set(s);
+    return self;
+  };
+  HtmlView = function(s) {
+    var elem, self;
+    elem = $("<pre>");
+    self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return s;
+      },
+      set: function(val) {
+        s = val;
+        return elem.html(s);
+      }
+    };
+    self.set(s);
+    return self;
+  };
+  StringWidget = function(s, save_method) {
+    var elem, multi_view, self;
+    elem = $("<div>");
+    self = {
+      element: function() {
+        return elem;
+      },
+      value: function() {
+        return multi_view.value();
+      },
+      append: function(subelem) {
+        return elem.append(subelem);
+      }
+    };
+    multi_view = MultiView(self, [TextareaWidget(s), HtmlView(s)]);
+    if (save_method) {
+      create_save_link(self, save_method);
+    }
     return self;
   };
   BooleanWidget = function(bool) {
@@ -307,7 +348,7 @@
   $.JsonWiki = {
     Hash: Hash,
     List: List,
-    Atom: Atom,
+    StringWidget: StringWidget,
     BooleanWidget: BooleanWidget
   };
 }).call(this);

@@ -1,7 +1,7 @@
 (function() {
   jQuery(document).ready(function() {
-    var Atom, BooleanWidget, Hash, HashWidget, List, data, default_answer, hash_schema, root_widget, save_method, _ref;
-    _ref = $.JsonWiki, Atom = _ref.Atom, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, data, default_answer, hash_schema, root_widget, save_method, _ref;
+    _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     save_method = function(data) {
       return console.log(JSON.stringify(data));
     };
@@ -26,7 +26,9 @@
     };
     default_answer = {
       choice: "choice",
-      answer: "answer"
+      answer: "answer",
+      explanation: "explanation",
+      correct: false
     };
     HashWidget = function(schema) {
       return function(obj) {
@@ -35,14 +37,14 @@
     };
     hash_schema = {
       question: HashWidget({
-        stimulus: Atom,
-        explanation: Atom,
+        stimulus: StringWidget,
+        explanation: StringWidget,
         answers: function(answers) {
           return List(answers, {
             widgetizer: HashWidget({
-              choice: Atom,
-              answer: Atom,
-              explanation: Atom,
+              choice: StringWidget,
+              answer: StringWidget,
+              explanation: StringWidget,
               correct: BooleanWidget
             }),
             default_value: default_answer
