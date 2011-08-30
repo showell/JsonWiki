@@ -201,11 +201,14 @@ jQuery(document).ready ->
   simple_text =
     default: ''
     widgetizer: Atom
+  simple_hash = (schema) ->
+    default: {}
+    widgetizer: (h) -> Hash h, schema
+       
   schema = (data) ->
     Hash data,
       question:
-        default: {},
-        widgetizer: (question) -> Hash question,
+        simple_hash(
           stimulus: simple_text
           explanation: simple_text
           answers:
@@ -215,6 +218,7 @@ jQuery(document).ready ->
                 answer: simple_text
                 correct: simple_text
                 explanation: simple_text
+        )
       save
   root = schema(data)
   $("#content").append root.element()
