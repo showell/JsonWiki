@@ -292,6 +292,7 @@
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
           li = $("<li>").html(w.element());
+          li.attr("class", "ListWidgetItem");
           ul.append(li);
           link = add_insert_link(self, index + 1);
           insert_links.push(link);

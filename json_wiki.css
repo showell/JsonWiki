@@ -1,0 +1,9 @@
+li.ListWidgetItem {
+  padding: 20px;
+  border: 1px black solid;
+  list-style-type: none;
+}
+
+th {
+  padding-right: 10px;
+}
