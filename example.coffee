@@ -6,6 +6,25 @@ jQuery(document).ready ->
 
   HashWidget = (schema) -> (obj) -> Hash obj, schema
   
+  quantitative_comparison = ->
+    data =
+      info: "Alice weighs less than Bob"
+      quantity_A: "Twice Alice's weight"
+      quantity_B: "Bob's Weight"
+      correct_answer: "D"
+      explanation: """
+        <b>The correct answer is choice D.</b>
+        We cannot determine from the information given.
+        """
+      
+    schema =
+      info: StringWidget
+      quantity_A: StringWidget
+      quantity_B: StringWidget
+      correct_answer: StringWidget
+      explanation: StringWidget 
+    Hash(data, schema, save_method)
+  
   multiple_choice_question = ->
     data =
       question:
@@ -67,4 +86,4 @@ jQuery(document).ready ->
       
     Hash(data, schema, save_method)
     
-  $("#content").append fraction_question().element()
+  $("#content").append quantitative_comparison().element()

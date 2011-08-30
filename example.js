@@ -1,6 +1,6 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, fraction_question, multiple_choice_question, save_method, _ref;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, fraction_question, multiple_choice_question, quantitative_comparison, save_method, _ref;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     save_method = function(data) {
       return alert("Saving data" + JSON.stringify(data, null, "    "));
@@ -9,6 +9,24 @@
       return function(obj) {
         return Hash(obj, schema);
       };
+    };
+    quantitative_comparison = function() {
+      var data, schema;
+      data = {
+        info: "Alice weighs less than Bob",
+        quantity_A: "Twice Alice's weight",
+        quantity_B: "Bob's Weight",
+        correct_answer: "D",
+        explanation: "<b>The correct answer is choice D.</b>\nWe cannot determine from the information given."
+      };
+      schema = {
+        info: StringWidget,
+        quantity_A: StringWidget,
+        quantity_B: StringWidget,
+        correct_answer: StringWidget,
+        explanation: StringWidget
+      };
+      return Hash(data, schema, save_method);
     };
     multiple_choice_question = function() {
       var data, default_answer, hash_schema;
@@ -76,6 +94,6 @@
       };
       return Hash(data, schema, save_method);
     };
-    return $("#content").append(fraction_question().element());
+    return $("#content").append(quantitative_comparison().element());
   });
 }).call(this);
