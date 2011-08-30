@@ -49,8 +49,7 @@
       return save_method(widget.value());
     });
     elem = widget.element();
-    elem.append(' ');
-    return elem.append(save_link);
+    return elem.prepend(save_link);
   };
   TextareaWidget = function(s) {
     var div, self, textarea;

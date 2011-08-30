@@ -36,8 +36,7 @@ create_save_link = (widget, save_method) ->
   save_link.click ->
     save_method widget.value()
   elem = widget.element()
-  elem.append ' '
-  elem.append save_link
+  elem.prepend save_link
 
 TextareaWidget = (s) ->
   s = "" unless s?
