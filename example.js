@@ -3,7 +3,7 @@
     var BooleanWidget, Hash, HashWidget, List, StringWidget, data, default_answer, hash_schema, root_widget, save_method, _ref;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     save_method = function(data) {
-      return console.log(JSON.stringify(data));
+      return alert("Saving data" + JSON.stringify(data, null, "    "));
     };
     data = {
       question: {

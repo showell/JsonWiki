@@ -1,7 +1,8 @@
 jQuery(document).ready ->
   {StringWidget, BooleanWidget, Hash, List} = $.JsonWiki
   
-  save_method = (data) -> console.log JSON.stringify data
+  save_method = (data) ->
+    alert "Saving data" + JSON.stringify data, null, "    "
   
   data =
     question:
