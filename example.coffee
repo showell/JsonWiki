@@ -25,12 +25,14 @@ jQuery(document).ready ->
     answer: "answer",
   }
   
+  HashWidget = (schema) -> (obj) -> Hash obj, schema
+  
   hash_schema =
-    question: (question) -> Hash question,
+    question: HashWidget
       stimulus: Atom
       explanation: Atom
       answers: (answers) -> List answers, 
-          widgetizer: (answer) -> Hash answer,
+          widgetizer: HashWidget
             choice: Atom
             answer: Atom
             explanation: Atom
