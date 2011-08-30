@@ -256,9 +256,7 @@
     a = $("<a href='#'>").html("insert");
     li.append(a);
     a.click(function() {
-      var new_element;
-      new_element = widget.new_element(index);
-      return widget.update_links(new_element, index);
+      return widget.insert_element_at_index(index);
     });
     return self = {
       set: function(idx) {
@@ -285,6 +283,7 @@
         var index, link, w, _len, _results;
         ul.empty();
         subwidgets = _.map(array, widgetizer);
+        insert_links = [];
         link = add_insert_link(self, 0);
         insert_links.push(link);
         ul.append(link.element);
@@ -304,10 +303,11 @@
         li.attr("class", "ListWidgetItem");
         return li;
       },
-      update_links: function(element, index) {
-        var i, insert_link, li, link, new_li, _len, _results;
+      insert_element_at_index: function(index) {
+        var i, insert_link, li, link, new_element, new_li, _len, _results;
+        new_element = self.new_element(index);
         li = $(ul.children()[index * 2]);
-        new_li = self.wrap(element);
+        new_li = self.wrap(new_element);
         li.after(new_li);
         link = add_insert_link(self, index + 1);
         insert_links.push(link);
@@ -321,7 +321,6 @@
       },
       new_element: function(index) {
         var widget;
-        console.log("new_element", default_value);
         widget = widgetizer(default_value);
         subwidgets.splice(index, 0, widget);
         return widget;

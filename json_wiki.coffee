@@ -181,8 +181,7 @@ add_insert_link = (widget, index) ->
   a = $("<a href='#'>").html "insert"
   li.append a
   a.click ->
-    new_element = widget.new_element(index)
-    widget.update_links(new_element, index)
+    widget.insert_element_at_index(index)
   self =
     set: (idx) -> index = index
     element: li
@@ -197,6 +196,7 @@ ListEditView = (array, widgetizer, default_value) ->
     set: (array) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
+      insert_links = []
       link = add_insert_link(self, 0)
       insert_links.push link
       ul.append link.element
@@ -205,21 +205,24 @@ ListEditView = (array, widgetizer, default_value) ->
         link = add_insert_link(self, index+1)
         insert_links.push link
         ul.append link.element
+        
     wrap: (w) ->
       li = $("<li>").html w.element()
       li.attr("class", "ListWidgetItem")
       li
-    update_links: (element, index) ->
+      
+    insert_element_at_index: (index) ->
+      new_element = self.new_element(index)
       li = $(ul.children()[index*2])
-      new_li = self.wrap(element)
+      new_li = self.wrap(new_element)
       li.after(new_li)
       link = add_insert_link(self, index+1)
       insert_links.push link
       new_li.after link.element
       for insert_link, i in insert_links
         insert_link.set(i)
+        
     new_element: (index) ->
-      console.log "new_element", default_value 
       widget = widgetizer(default_value)
       subwidgets.splice(index, 0, widget)
       widget
