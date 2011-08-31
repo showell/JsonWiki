@@ -1,5 +1,5 @@
 (function() {
-  var BooleanWidget, Hash, List, StringWidget, autosize_textarea, hash_to_table, make_delete_link, make_insert_link, set_callbacks, table_to_hash;
+  var BooleanWidget, Hash, List, StringWidget, autosize_textarea, hash_to_table, make_delete_link, make_insert_link;
   autosize_textarea = function(textarea, s) {
     var max_col, row, rows, _i, _len;
     rows = s.split("\n");
@@ -69,33 +69,30 @@
         return div.append(table);
       },
       value: function() {
-        return table_to_hash(trs);
+        var key, tr, value, _i, _len;
+        hash = {};
+        for (_i = 0, _len = trs.length; _i < _len; _i++) {
+          tr = trs[_i];
+          key = (tr.data("get_key"))();
+          value = (tr.data("get_value"))();
+          hash[key] = value;
+        }
+        return hash;
       }
     };
     self.set(hash);
     return self;
   };
-  table_to_hash = function(trs) {
-    var hash, key, tr, value, _i, _len;
-    hash = {};
-    for (_i = 0, _len = trs.length; _i < _len; _i++) {
-      tr = trs[_i];
-      key = (tr.data("get_key"))();
-      value = (tr.data("get_value"))();
-      hash[key] = value;
-    }
-    return hash;
-  };
-  set_callbacks = function(tr, widget) {
-    tr.data("get_key", function() {
-      return tr.find(".key").html();
-    });
-    return tr.data("get_value", function() {
-      return widget.value();
-    });
-  };
   hash_to_table = function(table, hash, widgetizer) {
-    var key, td_key, td_value, tr, trs, value, widget;
+    var key, set_callbacks, td_key, td_value, tr, trs, value, widget;
+    set_callbacks = function(tr, subwidget) {
+      tr.data("get_key", function() {
+        return tr.find(".key").html();
+      });
+      return tr.data("get_value", function() {
+        return subwidget.value();
+      });
+    };
     table.empty();
     trs = [];
     for (key in hash) {

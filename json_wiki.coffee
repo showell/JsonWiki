@@ -41,25 +41,22 @@ Hash = (hash, widgetizer) ->
       trs = hash_to_table(table, hash, widgetizer)
       div.append table
     value: ->
-      table_to_hash(trs)
+      hash = {}
+      for tr in trs
+        key = (tr.data "get_key")()
+        value = (tr.data "get_value")()
+        hash[key] = value
+      hash
   self.set(hash)
   self
     
-table_to_hash = (trs) ->
-  hash = {}
-  for tr in trs
-    key = (tr.data "get_key")()
-    value = (tr.data "get_value")()
-    hash[key] = value
-  hash
-
-set_callbacks = (tr, widget) ->
-  tr.data "get_key", ->
-    tr.find(".key").html()
-  tr.data "get_value", ->
-    widget.value() 
-
 hash_to_table = (table, hash, widgetizer) ->
+  set_callbacks = (tr, subwidget) ->
+    tr.data "get_key", ->
+      tr.find(".key").html()
+    tr.data "get_value", ->
+      subwidget.value() 
+
   table.empty()
   trs = []
   for key, value of hash
