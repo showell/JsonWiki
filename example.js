@@ -1,7 +1,8 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, preview_quantitative_comparison, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    var BooleanWidget, Hash, HashWidget, List, SharedPanel, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, preview_quantitative_comparison, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
+    SharedPanel = $.SharedPanel;
     HashWidget = function(schema) {
       return function(obj) {
         return Hash(obj, schema);
@@ -54,11 +55,11 @@
       return Hash(data, hash_schema, save_method);
     };
     preview_multiple_choice = function(widget) {
-      var data, template;
+      var data, html, template;
       data = widget.value();
       template = '{{#question}}\n  <h2>{{stimulus}}</h2>\n  <p>{{explanation}}</p>\n  {{#answers}}\n    <hr>\n    {{#correct}}<h3>Correct!</h3>{{/correct}}\n    {{choice}} - {{answer}}\n    <br>\n    {{explanation}}\n  {{/answers}}\n{{/question}}';
-      console.log(Mustache.to_html(template, data));
-      return $("#preview").html(Mustache.to_html(template, data));
+      html = Mustache.to_html(template, data);
+      return SharedPanel.html(html);
     };
     quantitative_comparison = function() {
       var data, schema;
@@ -79,11 +80,11 @@
       return Hash(data, schema, save_method);
     };
     preview_quantitative_comparison = function(widget) {
-      var data, template;
+      var data, html, template;
       data = widget.value();
       template = '{{info}}\n<table border="1">\n  <tr>\n    <td>{{quantity_A}}</td>\n    <td>{{quantity_B}}</td>\n  </tr>\n</table>\n<h2>Correct Answer is {{correct_answer}}</h2>\n<p>{{{explanation}}}</p>';
-      console.log(Mustache.to_html(template, data));
-      return $("#preview").html(Mustache.to_html(template, data));
+      html = Mustache.to_html(template, data);
+      return SharedPanel.html(html);
     };
     fraction_question = function() {
       var data, schema;
@@ -118,7 +119,7 @@
       var json, pre;
       json = JSON.stringify(widget.value(), null, '  ');
       pre = $("<pre>").html(json);
-      return $("#preview").html(pre);
+      return SharedPanel.html(pre);
     };
     examples = [
       {
@@ -147,7 +148,7 @@
       a = $("<a href='#'>").html(example.description);
       a.click(function() {
         var content, preview_link, save_link, widget;
-        $("#preview").empty();
+        SharedPanel.empty();
         content = $("#content");
         content.empty();
         widget = example.method();

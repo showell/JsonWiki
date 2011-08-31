@@ -1,5 +1,6 @@
 jQuery(document).ready ->
   {StringWidget, BooleanWidget, Hash, List} = $.JsonWiki
+  SharedPanel = $.SharedPanel
   
   HashWidget = (schema) -> (obj) -> Hash obj, schema
   
@@ -59,8 +60,8 @@ jQuery(document).ready ->
         {{/answers}}
       {{/question}}
     '''
-    console.log Mustache.to_html(template, data)
-    $("#preview").html Mustache.to_html(template, data)
+    html = Mustache.to_html(template, data)
+    SharedPanel.html html
   
   quantitative_comparison = ->
     data =
@@ -94,8 +95,8 @@ jQuery(document).ready ->
       <h2>Correct Answer is {{correct_answer}}</h2>
       <p>{{{explanation}}}</p>
     '''
-    console.log Mustache.to_html(template, data)
-    $("#preview").html Mustache.to_html(template, data)
+    html = Mustache.to_html(template, data)
+    SharedPanel.html html
     
       
   fraction_question = ->
@@ -129,7 +130,7 @@ jQuery(document).ready ->
   generic_preview_method = (widget) ->
     json = JSON.stringify widget.value(), null, '  '
     pre = $("<pre>").html json
-    $("#preview").html pre
+    SharedPanel.html pre
     
 
   examples = [
@@ -161,7 +162,7 @@ jQuery(document).ready ->
   create_example_link = (example) ->
     a = $("<a href='#'>").html(example.description)
     a.click ->
-      $("#preview").empty()
+      SharedPanel.empty()
       content = $("#content")
       content.empty()
       widget = example.method()
