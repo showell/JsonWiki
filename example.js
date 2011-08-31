@@ -1,6 +1,6 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     HashWidget = function(schema) {
       return function(obj) {
@@ -91,6 +91,15 @@
       };
       return Hash(data, schema, save_method);
     };
+    array_of_strings = function() {
+      var data, schema;
+      data = ["apple", "banana", "carrot"];
+      schema = {
+        widgetizer: StringWidget,
+        default_value: "new thingy"
+      };
+      return List(data, schema, save_method);
+    };
     generic_preview_method = function(widget) {
       var json, pre;
       json = JSON.stringify(widget.value(), null, '  ');
@@ -117,6 +126,10 @@
       }, {
         description: "Numeric Entry (fraction)",
         method: fraction_question,
+        preview_method: generic_preview_method
+      }, {
+        description: "Array of Strings",
+        method: array_of_strings,
         preview_method: generic_preview_method
       }
     ];

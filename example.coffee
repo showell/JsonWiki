@@ -84,6 +84,13 @@ jQuery(document).ready ->
       
     Hash(data, schema, save_method)
 
+  array_of_strings = ->
+    data = ["apple", "banana", "carrot"]
+    schema =
+      widgetizer: StringWidget
+      default_value: "new thingy"
+    List(data, schema, save_method)
+
   generic_preview_method = (widget) ->
     json = JSON.stringify widget.value(), null, '  '
     pre = $("<pre>").html json
@@ -116,7 +123,12 @@ jQuery(document).ready ->
       description: "Numeric Entry (fraction)"
       method: fraction_question
       preview_method: generic_preview_method
-    }
+    },
+    {
+      description: "Array of Strings"
+      method: array_of_strings
+      preview_method: generic_preview_method
+    },
   ]
   
   save_method = (data) ->
