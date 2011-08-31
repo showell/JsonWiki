@@ -1,5 +1,5 @@
 (function() {
-  var BooleanWidget, Hash, List, StringWidget, autosize_textarea, hash_to_table, make_insert_link, set_callbacks, table_to_hash;
+  var BooleanWidget, Hash, List, StringWidget, autosize_textarea, hash_to_table, make_delete_link, make_insert_link, set_callbacks, table_to_hash;
   autosize_textarea = function(textarea, s) {
     var max_col, row, rows, _i, _len;
     rows = s.split("\n");
@@ -115,11 +115,12 @@
     return trs;
   };
   List = function(array, options) {
-    var default_value, insert_links, save_method, self, subwidgets, ul, widgetizer;
+    var default_value, delete_links, insert_links, save_method, self, subwidgets, ul, widgetizer;
     widgetizer = options.widgetizer, default_value = options.default_value, save_method = options.save_method;
     ul = $("<ul>");
     subwidgets = [];
     insert_links = [];
+    delete_links = [];
     self = {
       element: function() {
         return ul;
@@ -140,32 +141,58 @@
         _results = [];
         for (index = 0, _len = subwidgets.length; index < _len; index++) {
           w = subwidgets[index];
-          ul.append(self.wrap(w));
+          ul.append(self.wrap(w, index));
           link = make_insert_link(self, index + 1);
           insert_links.push(link);
-          _results.push(ul.append(link.element));
+          _results.push(ul.append(link.element()));
         }
         return _results;
       },
-      wrap: function(w) {
-        var li;
-        li = $("<li>").html(w.element());
+      wrap: function(w, index) {
+        var delete_link, li;
+        li = $("<li>");
+        delete_link = make_delete_link(self, index);
+        delete_links.splice(index, 1, delete_link);
+        console.log("here", delete_link.element());
+        li.html(delete_link.element());
+        li.append("<br />");
+        li.append(w.element());
         li.attr("class", "ListWidgetItem");
         return li;
       },
       insert_element_at_index: function(index) {
-        var i, insert_link, li, link, new_element, new_li, _len, _results;
+        var li, link, new_element, new_li;
         new_element = self.new_element(index);
         li = $(ul.children()[index * 2]);
-        new_li = self.wrap(new_element);
+        new_li = self.wrap(new_element, index);
         li.after(new_li);
         link = make_insert_link(self, index + 1);
         insert_links.splice(index + 1, 0, link);
-        new_li.after(link.element);
-        _results = [];
+        new_li.after(link.element());
+        return self.update_insert_delete_links();
+      },
+      delete_element_at_index: function(index) {
+        var li, widget;
+        widget = subwidgets[index];
+        subwidgets.splice(index, 1);
+        li = $(ul.children()[index * 2 + 1]);
+        li.remove();
+        li = $(ul.children()[index * 2]);
+        li.remove();
+        insert_links.splice(index, 1);
+        delete_links.splice(index, 1);
+        return self.update_insert_delete_links();
+      },
+      update_insert_delete_links: function() {
+        var delete_link, i, insert_link, _len, _len2, _results;
         for (i = 0, _len = insert_links.length; i < _len; i++) {
           insert_link = insert_links[i];
-          _results.push(insert_link.set(i));
+          insert_link.set(i);
+        }
+        _results = [];
+        for (i = 0, _len2 = delete_links.length; i < _len2; i++) {
+          delete_link = delete_links[i];
+          _results.push(delete_link.set(i));
         }
         return _results;
       },
@@ -189,12 +216,33 @@
     });
     self = {
       set: function(idx) {
-        index = index;
+        index = idx;
         return a.html("insert element " + index);
       },
-      element: li
+      element: function() {
+        return li;
+      }
     };
     self.set(index);
+    return self;
+  };
+  make_delete_link = function(widget, index) {
+    var link, self;
+    link = $("<a href='#'>");
+    link.click(function() {
+      return widget.delete_element_at_index(index);
+    });
+    self = {
+      set: function(idx) {
+        index = idx;
+        return link.html("delete element " + index);
+      },
+      element: function() {
+        return link;
+      }
+    };
+    self.set(index);
+    console.log(link);
     return self;
   };
   $.JsonWiki = {

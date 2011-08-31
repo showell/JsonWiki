@@ -82,6 +82,7 @@ List = (array, options) ->
   ul = $("<ul>")
   subwidgets = []
   insert_links = []
+  delete_links = []
   self =
     element: -> ul
     value: -> _.map subwidgets, (w) -> w.value()
@@ -93,34 +94,55 @@ List = (array, options) ->
       insert_links.push link
       ul.append link.element
       for w, index in subwidgets
-        ul.append self.wrap w
+        ul.append self.wrap w, index
         link = make_insert_link(self, index+1)
         insert_links.push link
-        ul.append link.element
+        ul.append link.element()
         
-    wrap: (w) ->
-      li = $("<li>").html w.element()
+    wrap: (w, index) ->
+      li = $("<li>")
+      delete_link = make_delete_link(self, index)
+      delete_links.splice(index, 1, delete_link)
+      console.log "here", delete_link.element()
+      li.html delete_link.element()
+      li.append "<br />"
+      li.append w.element()
       li.attr("class", "ListWidgetItem")
       li
       
     insert_element_at_index: (index) ->
       new_element = self.new_element(index)
       li = $(ul.children()[index*2])
-      new_li = self.wrap(new_element)
+      new_li = self.wrap(new_element, index)
       li.after(new_li)
       link = make_insert_link(self, index+1)
       insert_links.splice(index+1, 0, link)
-      new_li.after link.element
+      new_li.after link.element()
+      self.update_insert_delete_links()
+        
+    delete_element_at_index: (index) ->
+      widget = subwidgets[index]
+      subwidgets.splice(index, 1)
+      li = $(ul.children()[index*2+1])
+      li.remove()
+      li = $(ul.children()[index*2])
+      li.remove()
+      insert_links.splice(index, 1)
+      delete_links.splice(index, 1)
+      self.update_insert_delete_links()
+      
+    update_insert_delete_links: ->
       for insert_link, i in insert_links
         insert_link.set(i)
-        
+      for delete_link, i in delete_links
+        delete_link.set(i)
+          
     new_element: (index) ->
       widget = widgetizer(default_value)
       subwidgets.splice(index, 0, widget)
       widget
   self.set(array)
   self
-
 
 make_insert_link = (widget, index) ->
   li = $("<li>")
@@ -130,10 +152,23 @@ make_insert_link = (widget, index) ->
     widget.insert_element_at_index(index)
   self =
     set: (idx) ->
-      index = index
+      index = idx
       a.html "insert element #{index}"
-    element: li
+    element: -> li
   self.set(index)
+  self
+
+make_delete_link = (widget, index) ->
+  link = $("<a href='#'>")
+  link.click ->
+    widget.delete_element_at_index(index)
+  self =
+    set: (idx) ->
+      index = idx
+      link.html "delete element #{index}"
+    element: -> link
+  self.set(index)
+  console.log link
   self
 
 $.JsonWiki =
