@@ -103,7 +103,6 @@ List = (array, options) ->
       li = $("<li>")
       delete_link = make_delete_link(self, index)
       delete_links.splice(index, 0, delete_link)
-      console.log "here", delete_link.element()
       li.html delete_link.element()
       li.append "<br />"
       li.append w.element()
@@ -112,22 +111,25 @@ List = (array, options) ->
       
     insert_element_at_index: (index) ->
       new_element = self.new_element(index)
-      li = $(ul.children()[index*2])
-      new_li = self.wrap(new_element, index)
-      li.after(new_li)
-      link = make_insert_link(self, index+1)
-      insert_links.splice(index+1, 0, link)
-      new_li.after link.element()
+      widget_li = self.wrap(new_element, index)
+      insert_link = make_insert_link(self, index+1)
+      insert_links.splice(index+1, 0, insert_link)
+      self.insert_list_items_for_index(index, widget_li, insert_link.element()) 
       self.update_insert_delete_links()
-        
+     
+    insert_list_items_for_index: (index, widget_li, insert_link_li) ->
+      position = $(ul.children()[index*2])
+      position.after widget_li
+      widget_li.after insert_link_li
+   
     remove_list_items_for_index: (index) ->
       # this is a bit brittle, but it is due to
       # insert links being list items as well as
       # the actual elements of our list
-      li = $(ul.children()[index*2])
-      li.remove()
-      li = $(ul.children()[index*2])
-      li.remove()
+      position = $(ul.children()[index*2])
+      position.remove()
+      position = $(ul.children()[index*2])
+      position.remove()
       
     delete_element_at_index: (index) ->
       widget = subwidgets[index]

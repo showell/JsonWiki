@@ -153,7 +153,6 @@
         li = $("<li>");
         delete_link = make_delete_link(self, index);
         delete_links.splice(index, 0, delete_link);
-        console.log("here", delete_link.element());
         li.html(delete_link.element());
         li.append("<br />");
         li.append(w.element());
@@ -161,22 +160,26 @@
         return li;
       },
       insert_element_at_index: function(index) {
-        var li, link, new_element, new_li;
+        var insert_link, new_element, widget_li;
         new_element = self.new_element(index);
-        li = $(ul.children()[index * 2]);
-        new_li = self.wrap(new_element, index);
-        li.after(new_li);
-        link = make_insert_link(self, index + 1);
-        insert_links.splice(index + 1, 0, link);
-        new_li.after(link.element());
+        widget_li = self.wrap(new_element, index);
+        insert_link = make_insert_link(self, index + 1);
+        insert_links.splice(index + 1, 0, insert_link);
+        self.insert_list_items_for_index(index, widget_li, insert_link.element());
         return self.update_insert_delete_links();
       },
+      insert_list_items_for_index: function(index, widget_li, insert_link_li) {
+        var position;
+        position = $(ul.children()[index * 2]);
+        position.after(widget_li);
+        return widget_li.after(insert_link_li);
+      },
       remove_list_items_for_index: function(index) {
-        var li;
-        li = $(ul.children()[index * 2]);
-        li.remove();
-        li = $(ul.children()[index * 2]);
-        return li.remove();
+        var position;
+        position = $(ul.children()[index * 2]);
+        position.remove();
+        position = $(ul.children()[index * 2]);
+        return position.remove();
       },
       delete_element_at_index: function(index) {
         var widget;
