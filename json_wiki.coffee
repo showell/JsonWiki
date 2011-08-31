@@ -6,6 +6,27 @@ autosize_textarea = (textarea, s) ->
     max_col = row.length if row.length > max_col
   textarea.attr("cols", max_col)
 
+
+SearchWidget = (value, shared_panel, search_callback) ->
+  # still in progress
+  div = $("<div>")
+  div.append "<br />"
+  textarea = $("<textarea>")
+  textarea.val value
+  div.append textarea
+  self =
+    element: ->
+      proxy_link = $("<a href='#'>")
+      proxy_link.html("search")
+      proxy_link.click ->
+        shared_panel.html div
+    value: -> 
+      keyword = textarea.val()
+      long_info = search_callback(keyword)
+      throw "Not a valid key" unless long_info?
+      keyword
+  self
+
 StringWidget = (s) ->
   s = "" unless s?
   div = $("<div>")
@@ -183,5 +204,6 @@ $.JsonWiki =
   List: List
   StringWidget: StringWidget
   BooleanWidget: BooleanWidget
+  SearchWidget: SearchWidget
   
   

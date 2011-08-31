@@ -1,7 +1,7 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, SharedPanel, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, preview_quantitative_comparison, quantitative_comparison, save_method, _i, _len, _ref, _results;
-    _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
+    var BooleanWidget, Hash, HashWidget, List, SearchWidget, SharedPanel, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, lookup_question_set_info, multiple_choice_question, preview_multiple_choice, preview_quantitative_comparison, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List, SearchWidget = _ref.SearchWidget;
     SharedPanel = $.SharedPanel;
     HashWidget = function(schema) {
       return function(obj) {
@@ -12,6 +12,7 @@
       var data, default_answer, hash_schema;
       data = {
         question: {
+          info: "Section 1",
           stimulus: "How many fingers?",
           explanation: "Just count them",
           answers: [
@@ -37,6 +38,9 @@
       };
       hash_schema = {
         question: HashWidget({
+          info: function(val) {
+            return SearchWidget(val, SharedPanel, lookup_question_set_info);
+          },
           stimulus: StringWidget,
           explanation: StringWidget,
           answers: function(answers) {
@@ -57,7 +61,9 @@
     preview_multiple_choice = function(widget) {
       var data, html, template;
       data = widget.value();
-      template = '{{#question}}\n  <h2>{{stimulus}}</h2>\n  <p>{{explanation}}</p>\n  {{#answers}}\n    <hr>\n    {{#correct}}<h3>Correct!</h3>{{/correct}}\n    {{choice}} - {{answer}}\n    <br>\n    {{explanation}}\n  {{/answers}}\n{{/question}}';
+      console.log(JSON.stringify(data, null, "   "));
+      data.question.question_set_info = lookup_question_set_info(data.question.info);
+      template = '{{#question}}\n  <p>{{{question_set_info}}}</p>\n  <h2>{{stimulus}}</h2>\n  <p>{{explanation}}</p>\n  {{#answers}}\n    <hr>\n    {{#correct}}<h3>Correct!</h3>{{/correct}}\n    {{choice}} - {{answer}}\n    <br>\n    {{explanation}}\n  {{/answers}}\n{{/question}}';
       html = Mustache.to_html(template, data);
       return SharedPanel.html(html);
     };
@@ -120,6 +126,14 @@
       json = JSON.stringify(widget.value(), null, '  ');
       pre = $("<pre>").html(json);
       return SharedPanel.html(pre);
+    };
+    lookup_question_set_info = function(city) {
+      var fake_data;
+      fake_data = {
+        "Section 1": "some image of a graph",
+        "Section 2": 'This is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>\nThis is a really, really long passage.\n<br>'
+      };
+      return fake_data[city];
     };
     examples = [
       {

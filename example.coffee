@@ -1,5 +1,5 @@
 jQuery(document).ready ->
-  {StringWidget, BooleanWidget, Hash, List} = $.JsonWiki
+  {StringWidget, BooleanWidget, Hash, List, SearchWidget} = $.JsonWiki
   SharedPanel = $.SharedPanel
   
   HashWidget = (schema) -> (obj) -> Hash obj, schema
@@ -8,6 +8,7 @@ jQuery(document).ready ->
   multiple_choice_question = ->
     data =
       question:
+        info: "Section 1"
         stimulus: "How many fingers?"
         explanation: "Just count them"
         answers: [
@@ -34,6 +35,7 @@ jQuery(document).ready ->
   
     hash_schema =
       question: HashWidget
+        info: (val) -> SearchWidget val, SharedPanel, lookup_question_set_info
         stimulus: StringWidget
         explanation: StringWidget
         answers: (answers) -> List answers, 
@@ -47,8 +49,11 @@ jQuery(document).ready ->
 
   preview_multiple_choice = (widget) ->
     data = widget.value()
+    console.log JSON.stringify data, null, "   "
+    data.question.question_set_info = lookup_question_set_info(data.question.info)
     template = '''
       {{#question}}
+        <p>{{{question_set_info}}}</p>
         <h2>{{stimulus}}</h2>
         <p>{{explanation}}</p>
         {{#answers}}
@@ -131,7 +136,29 @@ jQuery(document).ready ->
     json = JSON.stringify widget.value(), null, '  '
     pre = $("<pre>").html json
     SharedPanel.html pre
-    
+
+
+  lookup_question_set_info = (city) ->
+    fake_data = {
+      "Section 1": "some image of a graph"
+      "Section 2": '''
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+        This is a really, really long passage.
+        <br>
+      '''
+    }
+    fake_data[city]
 
   examples = [
     {

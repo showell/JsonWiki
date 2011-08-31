@@ -1,5 +1,5 @@
 (function() {
-  var BooleanWidget, Hash, List, StringWidget, autosize_textarea, hash_to_table, make_delete_link, make_insert_link;
+  var BooleanWidget, Hash, List, SearchWidget, StringWidget, autosize_textarea, hash_to_table, make_delete_link, make_insert_link;
   autosize_textarea = function(textarea, s) {
     var max_col, row, rows, _i, _len;
     rows = s.split("\n");
@@ -12,6 +12,34 @@
       }
     }
     return textarea.attr("cols", max_col);
+  };
+  SearchWidget = function(value, shared_panel, search_callback) {
+    var div, self, textarea;
+    div = $("<div>");
+    div.append("<br />");
+    textarea = $("<textarea>");
+    textarea.val(value);
+    div.append(textarea);
+    self = {
+      element: function() {
+        var proxy_link;
+        proxy_link = $("<a href='#'>");
+        proxy_link.html("search");
+        return proxy_link.click(function() {
+          return shared_panel.html(div);
+        });
+      },
+      value: function() {
+        var keyword, long_info;
+        keyword = textarea.val();
+        long_info = search_callback(keyword);
+        if (long_info == null) {
+          throw "Not a valid key";
+        }
+        return keyword;
+      }
+    };
+    return self;
   };
   StringWidget = function(s) {
     var div, self, textarea;
@@ -253,6 +281,7 @@
     Hash: Hash,
     List: List,
     StringWidget: StringWidget,
-    BooleanWidget: BooleanWidget
+    BooleanWidget: BooleanWidget,
+    SearchWidget: SearchWidget
   };
 }).call(this);
