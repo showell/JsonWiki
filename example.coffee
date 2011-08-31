@@ -43,6 +43,25 @@ jQuery(document).ready ->
               correct: BooleanWidget
             default_value: default_answer
     Hash(data, hash_schema, save_method)
+
+  preview_multiple_choice = (widget) ->
+    data = widget.value()
+    console.log data
+    template = '''
+      {{#question}}
+      <h2>{{stimulus}}</h2>
+      <p>{{explanation}}</p>
+      {{#answers}}
+        <hr>
+        {{#correct}}<h3>Correct!</h3>{{/correct}}
+        {{choice}} - {{answer}}
+        <br>
+        {{explanation}}
+      {{/answers}}
+      {{/question}}
+    '''
+    console.log Mustache.to_html(template, data)
+    $("#preview").html Mustache.to_html(template, data)
   
   quantitative_comparison = ->
     data =
@@ -95,18 +114,6 @@ jQuery(document).ready ->
     json = JSON.stringify widget.value(), null, '  '
     pre = $("<pre>").html json
     $("#preview").html pre
-    
-  preview_multiple_choice = (widget) ->
-    data = widget.value()
-    console.log data
-    template = '''
-      {{#question}}
-      <h2>{{stimulus}}</h2>
-      <p>{{explanation}}</p>
-      {{/question}}
-    '''
-    console.log Mustache.to_html(template, data)
-    $("#preview").html Mustache.to_html(template, data)
     
   examples = [
     {

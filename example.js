@@ -53,6 +53,14 @@
       };
       return Hash(data, hash_schema, save_method);
     };
+    preview_multiple_choice = function(widget) {
+      var data, template;
+      data = widget.value();
+      console.log(data);
+      template = '{{#question}}\n<h2>{{stimulus}}</h2>\n<p>{{explanation}}</p>\n{{#answers}}\n  <hr>\n  {{#correct}}<h3>Correct!</h3>{{/correct}}\n  {{choice}} - {{answer}}\n  <br>\n  {{explanation}}\n{{/answers}}\n{{/question}}';
+      console.log(Mustache.to_html(template, data));
+      return $("#preview").html(Mustache.to_html(template, data));
+    };
     quantitative_comparison = function() {
       var data, schema;
       data = {
@@ -105,14 +113,6 @@
       json = JSON.stringify(widget.value(), null, '  ');
       pre = $("<pre>").html(json);
       return $("#preview").html(pre);
-    };
-    preview_multiple_choice = function(widget) {
-      var data, template;
-      data = widget.value();
-      console.log(data);
-      template = '{{#question}}\n<h2>{{stimulus}}</h2>\n<p>{{explanation}}</p>\n{{/question}}';
-      console.log(Mustache.to_html(template, data));
-      return $("#preview").html(Mustache.to_html(template, data));
     };
     examples = [
       {
