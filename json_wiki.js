@@ -152,7 +152,7 @@
         var delete_link, li;
         li = $("<li>");
         delete_link = make_delete_link(self, index);
-        delete_links.splice(index, 1, delete_link);
+        delete_links.splice(index, 0, delete_link);
         console.log("here", delete_link.element());
         li.html(delete_link.element());
         li.append("<br />");
@@ -171,14 +171,18 @@
         new_li.after(link.element());
         return self.update_insert_delete_links();
       },
-      delete_element_at_index: function(index) {
-        var li, widget;
-        widget = subwidgets[index];
-        subwidgets.splice(index, 1);
-        li = $(ul.children()[index * 2 + 1]);
-        li.remove();
+      remove_list_items_for_index: function(index) {
+        var li;
         li = $(ul.children()[index * 2]);
         li.remove();
+        li = $(ul.children()[index * 2]);
+        return li.remove();
+      },
+      delete_element_at_index: function(index) {
+        var widget;
+        widget = subwidgets[index];
+        self.remove_list_items_for_index(index);
+        subwidgets.splice(index, 1);
         insert_links.splice(index, 1);
         delete_links.splice(index, 1);
         return self.update_insert_delete_links();
