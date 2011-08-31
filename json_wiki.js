@@ -114,24 +114,6 @@
     }
     return trs;
   };
-  make_insert_link = function(widget, index) {
-    var a, li, self;
-    li = $("<li>");
-    a = $("<a href='#'>");
-    li.append(a);
-    a.click(function() {
-      return widget.insert_element_at_index(index);
-    });
-    self = {
-      set: function(idx) {
-        index = index;
-        return a.html("insert element " + index);
-      },
-      element: li
-    };
-    self.set(index);
-    return self;
-  };
   List = function(array, options) {
     var default_value, insert_links, save_method, self, subwidgets, ul, widgetizer;
     widgetizer = options.widgetizer, default_value = options.default_value, save_method = options.save_method;
@@ -195,6 +177,24 @@
       }
     };
     self.set(array);
+    return self;
+  };
+  make_insert_link = function(widget, index) {
+    var a, li, self;
+    li = $("<li>");
+    a = $("<a href='#'>");
+    li.append(a);
+    a.click(function() {
+      return widget.insert_element_at_index(index);
+    });
+    self = {
+      set: function(idx) {
+        index = index;
+        return a.html("insert element " + index);
+      },
+      element: li
+    };
+    self.set(index);
     return self;
   };
   $.JsonWiki = {

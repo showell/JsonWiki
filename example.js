@@ -1,29 +1,11 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     HashWidget = function(schema) {
       return function(obj) {
         return Hash(obj, schema);
       };
-    };
-    quantitative_comparison = function() {
-      var data, schema;
-      data = {
-        info: "Alice weighs less than Bob",
-        quantity_A: "Twice Alice's weight",
-        quantity_B: "Bob's Weight",
-        correct_answer: "D",
-        explanation: "<b>The correct answer is choice D.</b>\nWe cannot determine from the information given."
-      };
-      schema = {
-        info: StringWidget,
-        quantity_A: StringWidget,
-        quantity_B: StringWidget,
-        correct_answer: StringWidget,
-        explanation: StringWidget
-      };
-      return Hash(data, schema, save_method);
     };
     multiple_choice_question = function() {
       var data, default_answer, hash_schema;
@@ -71,6 +53,24 @@
       };
       return Hash(data, hash_schema, save_method);
     };
+    quantitative_comparison = function() {
+      var data, schema;
+      data = {
+        info: "Alice weighs less than Bob",
+        quantity_A: "Twice Alice's weight",
+        quantity_B: "Bob's Weight",
+        correct_answer: "D",
+        explanation: "<b>The correct answer is choice D.</b>\nWe cannot determine from the information given."
+      };
+      schema = {
+        info: StringWidget,
+        quantity_A: StringWidget,
+        quantity_B: StringWidget,
+        correct_answer: StringWidget,
+        explanation: StringWidget
+      };
+      return Hash(data, schema, save_method);
+    };
     fraction_question = function() {
       var data, schema;
       data = {
@@ -97,11 +97,19 @@
       pre = $("<pre>").html(json);
       return $("#preview").html(pre);
     };
+    preview_multiple_choice = function(widget) {
+      var data, template;
+      data = widget.value();
+      console.log(data);
+      template = '{{#question}}\n<h2>{{stimulus}}</h2>\n<p>{{explanation}}</p>\n{{/question}}';
+      console.log(Mustache.to_html(template, data));
+      return $("#preview").html(Mustache.to_html(template, data));
+    };
     examples = [
       {
         description: "Multiple Choice",
         method: multiple_choice_question,
-        preview_method: generic_preview_method
+        preview_method: preview_multiple_choice
       }, {
         description: "Quantitative Comparison",
         method: quantitative_comparison,

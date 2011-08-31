@@ -76,20 +76,6 @@ hash_to_table = (table, hash, widgetizer) ->
     tr.append td_value
   trs
 
-make_insert_link = (widget, index) ->
-  li = $("<li>")
-  a = $("<a href='#'>")
-  li.append a
-  a.click ->
-    widget.insert_element_at_index(index)
-  self =
-    set: (idx) ->
-      index = index
-      a.html "insert element #{index}"
-    element: li
-  self.set(index)
-  self
-
 
 List = (array, options) ->
   {widgetizer, default_value, save_method} = options
@@ -133,6 +119,21 @@ List = (array, options) ->
       subwidgets.splice(index, 0, widget)
       widget
   self.set(array)
+  self
+
+
+make_insert_link = (widget, index) ->
+  li = $("<li>")
+  a = $("<a href='#'>")
+  li.append a
+  a.click ->
+    widget.insert_element_at_index(index)
+  self =
+    set: (idx) ->
+      index = index
+      a.html "insert element #{index}"
+    element: li
+  self.set(index)
   self
 
 $.JsonWiki =

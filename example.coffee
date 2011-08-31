@@ -3,25 +3,7 @@ jQuery(document).ready ->
   
   HashWidget = (schema) -> (obj) -> Hash obj, schema
   
-  quantitative_comparison = ->
-    data =
-      info: "Alice weighs less than Bob"
-      quantity_A: "Twice Alice's weight"
-      quantity_B: "Bob's Weight"
-      correct_answer: "D"
-      explanation: """
-        <b>The correct answer is choice D.</b>
-        We cannot determine from the information given.
-        """
-      
-    schema =
-      info: StringWidget
-      quantity_A: StringWidget
-      quantity_B: StringWidget
-      correct_answer: StringWidget
-      explanation: StringWidget 
-    Hash(data, schema, save_method)
-  
+
   multiple_choice_question = ->
     data =
       question:
@@ -61,7 +43,26 @@ jQuery(document).ready ->
               correct: BooleanWidget
             default_value: default_answer
     Hash(data, hash_schema, save_method)
-    
+  
+  quantitative_comparison = ->
+    data =
+      info: "Alice weighs less than Bob"
+      quantity_A: "Twice Alice's weight"
+      quantity_B: "Bob's Weight"
+      correct_answer: "D"
+      explanation: """
+        <b>The correct answer is choice D.</b>
+        We cannot determine from the information given.
+        """
+      
+    schema =
+      info: StringWidget
+      quantity_A: StringWidget
+      quantity_B: StringWidget
+      correct_answer: StringWidget
+      explanation: StringWidget 
+    Hash(data, schema, save_method)
+      
   fraction_question = ->
     data =
       question: '''
@@ -88,11 +89,23 @@ jQuery(document).ready ->
     pre = $("<pre>").html json
     $("#preview").html pre
     
+  preview_multiple_choice = (widget) ->
+    data = widget.value()
+    console.log data
+    template = '''
+      {{#question}}
+      <h2>{{stimulus}}</h2>
+      <p>{{explanation}}</p>
+      {{/question}}
+    '''
+    console.log Mustache.to_html(template, data)
+    $("#preview").html Mustache.to_html(template, data)
+    
   examples = [
     {
       description: "Multiple Choice"
       method: multiple_choice_question
-      preview_method: generic_preview_method
+      preview_method: preview_multiple_choice
     },
     {
       description: "Quantitative Comparison"
