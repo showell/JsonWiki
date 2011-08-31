@@ -85,7 +85,9 @@ List = (array, options) ->
   delete_links = []
   self =
     element: -> ul
+    
     value: -> _.map subwidgets, (w) -> w.value()
+    
     set: (array) ->
       ul.empty()
       subwidgets = _.map(array, widgetizer)
