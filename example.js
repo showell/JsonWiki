@@ -1,6 +1,6 @@
 (function() {
   jQuery(document).ready(function() {
-    var BooleanWidget, Hash, HashWidget, List, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, quantitative_comparison, save_method, _i, _len, _ref, _results;
+    var BooleanWidget, Hash, HashWidget, List, StringWidget, array_of_strings, create_example_link, example, examples, fraction_question, generic_preview_method, multiple_choice_question, preview_multiple_choice, preview_quantitative_comparison, quantitative_comparison, save_method, _i, _len, _ref, _results;
     _ref = $.JsonWiki, StringWidget = _ref.StringWidget, BooleanWidget = _ref.BooleanWidget, Hash = _ref.Hash, List = _ref.List;
     HashWidget = function(schema) {
       return function(obj) {
@@ -56,8 +56,7 @@
     preview_multiple_choice = function(widget) {
       var data, template;
       data = widget.value();
-      console.log(data);
-      template = '{{#question}}\n<h2>{{stimulus}}</h2>\n<p>{{explanation}}</p>\n{{#answers}}\n  <hr>\n  {{#correct}}<h3>Correct!</h3>{{/correct}}\n  {{choice}} - {{answer}}\n  <br>\n  {{explanation}}\n{{/answers}}\n{{/question}}';
+      template = '{{#question}}\n  <h2>{{stimulus}}</h2>\n  <p>{{explanation}}</p>\n  {{#answers}}\n    <hr>\n    {{#correct}}<h3>Correct!</h3>{{/correct}}\n    {{choice}} - {{answer}}\n    <br>\n    {{explanation}}\n  {{/answers}}\n{{/question}}';
       console.log(Mustache.to_html(template, data));
       return $("#preview").html(Mustache.to_html(template, data));
     };
@@ -78,6 +77,13 @@
         explanation: StringWidget
       };
       return Hash(data, schema, save_method);
+    };
+    preview_quantitative_comparison = function(widget) {
+      var data, template;
+      data = widget.value();
+      template = '{{info}}\n<table border="1">\n  <tr>\n    <td>{{quantity_A}}</td>\n    <td>{{quantity_B}}</td>\n  </tr>\n</table>\n<h2>Correct Answer is {{correct_answer}}</h2>\n<p>{{{explanation}}}</p>';
+      console.log(Mustache.to_html(template, data));
+      return $("#preview").html(Mustache.to_html(template, data));
     };
     fraction_question = function() {
       var data, schema;
@@ -122,7 +128,7 @@
       }, {
         description: "Quantitative Comparison",
         method: quantitative_comparison,
-        preview_method: generic_preview_method
+        preview_method: preview_quantitative_comparison
       }, {
         description: "Numeric Entry (fraction)",
         method: fraction_question,

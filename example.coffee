@@ -12,13 +12,13 @@ jQuery(document).ready ->
         answers: [
           {
             choice: "A",
-            answer: "one",
+            answer: "one"
             explanation: "one is not enough"
             correct: false
           },
           {
             choice: "B",
-            answer: "five",
+            answer: "five"
             explanation: "we count the thumb"
             correct: true
           }
@@ -46,18 +46,17 @@ jQuery(document).ready ->
 
   preview_multiple_choice = (widget) ->
     data = widget.value()
-    console.log data
     template = '''
       {{#question}}
-      <h2>{{stimulus}}</h2>
-      <p>{{explanation}}</p>
-      {{#answers}}
-        <hr>
-        {{#correct}}<h3>Correct!</h3>{{/correct}}
-        {{choice}} - {{answer}}
-        <br>
-        {{explanation}}
-      {{/answers}}
+        <h2>{{stimulus}}</h2>
+        <p>{{explanation}}</p>
+        {{#answers}}
+          <hr>
+          {{#correct}}<h3>Correct!</h3>{{/correct}}
+          {{choice}} - {{answer}}
+          <br>
+          {{explanation}}
+        {{/answers}}
       {{/question}}
     '''
     console.log Mustache.to_html(template, data)
@@ -81,6 +80,23 @@ jQuery(document).ready ->
       correct_answer: StringWidget
       explanation: StringWidget 
     Hash(data, schema, save_method)
+
+  preview_quantitative_comparison = (widget) ->
+    data = widget.value()
+    template = '''
+      {{info}}
+      <table border="1">
+        <tr>
+          <td>{{quantity_A}}</td>
+          <td>{{quantity_B}}</td>
+        </tr>
+      </table>
+      <h2>Correct Answer is {{correct_answer}}</h2>
+      <p>{{{explanation}}}</p>
+    '''
+    console.log Mustache.to_html(template, data)
+    $("#preview").html Mustache.to_html(template, data)
+    
       
   fraction_question = ->
     data =
@@ -115,6 +131,7 @@ jQuery(document).ready ->
     pre = $("<pre>").html json
     $("#preview").html pre
     
+
   examples = [
     {
       description: "Multiple Choice"
@@ -124,7 +141,7 @@ jQuery(document).ready ->
     {
       description: "Quantitative Comparison"
       method: quantitative_comparison
-      preview_method: generic_preview_method
+      preview_method: preview_quantitative_comparison
     },
     {
       description: "Numeric Entry (fraction)"
